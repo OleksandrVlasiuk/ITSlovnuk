@@ -1,45 +1,48 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.build/
-.buildlog/
-.history
-.svn/
-.swiftpm/
-migrate_working_dir/
-
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
-
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
+# Flutter & Dart
+build/
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
+.packages
+pubspec.lock
 
-# Symbolication related
-app.*.symbols
+# Android
+android/app/debug/
+android/app/profile/
+android/app/release/
+android/.gradle/
+android/local.properties
+*.keystore
 
-# Obfuscation related
-app.*.map.json
+# iOS (якщо колись додаси)
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/.generated
+ios/Pods/
+ios/Runner.xcworkspace/
+ios/.symlinks/
+ios/build/
+ios/Flutter/App.framework
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# Web (якщо буде Flutter Web)
+web/.dart_tool/
+web/build/
+
+# Windows (Flutter Desktop)
+windows/.dart_tool/
+windows/build/
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# Android Studio
+.idea/
+
+# Environment secrets
+.env
+
+# Crashlytics (якщо колись буде Firebase)
+android/app/crashlytics-build.properties

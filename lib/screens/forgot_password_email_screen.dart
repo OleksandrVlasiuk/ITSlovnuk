@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'forgot_password_code_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'login_screen.dart';
 
 class ForgotPasswordEmailScreen extends StatelessWidget {
   const ForgotPasswordEmailScreen({super.key});
@@ -7,6 +8,25 @@ class ForgotPasswordEmailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextEditingController _emailController = TextEditingController();
+
+    Future<void> _sendResetEmail() async {
+      try {
+        await FirebaseAuth.instance.sendPasswordResetEmail(
+          email: _emailController.text.trim(),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Інструкції надіслані на вашу пошту!')),
+        );
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+              (route) => false,
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Помилка: $e')),
+        );
+      }
+    }
 
     return Scaffold(
       backgroundColor: const Color(0xFF1C1C1C),
@@ -35,7 +55,7 @@ class ForgotPasswordEmailScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'Отримайте код для відновлення пароля на вашу електронну пошту',
+                      'Ми надішлемо вам інструкції для відновлення на пошту',
                       style: TextStyle(fontSize: 14, color: Colors.black),
                     ),
                   ],
@@ -67,9 +87,7 @@ class ForgotPasswordEmailScreen extends StatelessWidget {
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => const ForgotPasswordCodeScreen()));
-                        },
+                        onPressed: _sendResetEmail,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF5A5A5A),
                           foregroundColor: Colors.white,

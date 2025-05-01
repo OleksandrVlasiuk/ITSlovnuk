@@ -1,58 +1,212 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class CardsListPage extends StatelessWidget {
+class CardsListPage extends StatefulWidget {
+  final String deckId;
   final String deckTitle;
-  final List<Map<String, String>> cards; // приклад структури картки
 
-  const CardsListPage({super.key, required this.deckTitle, required this.cards});
+  const CardsListPage({super.key, required this.deckId, required this.deckTitle});
+
+  @override
+  State<CardsListPage> createState() => _CardsListPageState();
+}
+
+class _CardsListPageState extends State<CardsListPage> {
+  List<DocumentSnapshot> cards = [];
+  bool isLoading = true;
+  bool updated = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCards();
+  }
+
+  Future<void> _loadCards() async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('decks')
+        .doc(widget.deckId)
+        .collection('cards')
+        .orderBy('createdAt', descending: false)
+        .get();
+
+    setState(() {
+      cards = snapshot.docs;
+      isLoading = false;
+    });
+  }
+
+  bool _isNew(Timestamp createdAt) {
+    final now = DateTime.now();
+    return now.difference(createdAt.toDate()).inHours < 24;
+  }
+
+  Future<void> _editCard(DocumentSnapshot card) async {
+    final termController = TextEditingController(text: card['term']);
+    final defUkrController = TextEditingController(text: card['definitionUkr'] ?? '');
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Редагувати картку'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: termController,
+              decoration: const InputDecoration(labelText: 'Англійське слово'),
+            ),
+            TextField(
+              controller: defUkrController,
+              decoration: const InputDecoration(labelText: 'Український переклад'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Скасувати')),
+          ElevatedButton(
+            onPressed: () async {
+              await FirebaseFirestore.instance
+                  .collection('decks')
+                  .doc(widget.deckId)
+                  .collection('cards')
+                  .doc(card.id)
+                  .update({
+                'term': termController.text.trim(),
+                'definitionUkr': defUkrController.text.trim(),
+              });
+              Navigator.pop(context, true);
+            },
+            child: const Text('Зберегти'),
+          ),
+        ],
+      ),
+    );
+
+    if (result == true) {
+      updated = true;
+      _loadCards();
+    }
+  }
+
+  Future<void> _deleteCard(String cardId) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Підтвердження"),
+        content: const Text("Видалити цю картку?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text("Скасувати"),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text("Видалити"),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await FirebaseFirestore.instance
+          .collection('decks')
+          .doc(widget.deckId)
+          .collection('cards')
+          .doc(cardId)
+          .delete();
+
+      await FirebaseFirestore.instance
+          .collection('decks')
+          .doc(widget.deckId)
+          .update({
+        'cardCount': FieldValue.increment(-1),
+      });
+
+      updated = true;
+      _loadCards();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF1C1C1C),
-      appBar: AppBar(
-        title: Text(deckTitle, style: const TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFF2C2C2C),
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: cards.length,
-        itemBuilder: (context, index) {
-          final card = cards[index];
-          return Card(
-            color: const Color(0xFF333333),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            child: ListTile(
-              title: Text(card['front'] ?? '', style: const TextStyle(color: Colors.white)),
-              subtitle: Text(card['back'] ?? '', style: const TextStyle(color: Colors.white70)),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.white),
-                    onPressed: () {
-                      // TODO: Реалізувати редагування
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.redAccent),
-                    onPressed: () {
-                      // TODO: Реалізувати видалення
-                    },
-                  ),
-                ],
-              ),
-              onTap: () {
-                // також можна відкрити повноекранний перегляд
-              },
+    return WillPopScope(
+      onWillPop: () async {
+        if (updated) {
+          Navigator.pop(context, true);
+          return false;
+        }
+        return true;
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFF1C1C1C),
+        appBar: AppBar(
+          backgroundColor: const Color(0xFF2C2C2C),
+          title: Text(widget.deckTitle, style: const TextStyle(color: Colors.white)),
+          iconTheme: const IconThemeData(color: Colors.white),
+          centerTitle: true,
+        ),
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Padding(
+          padding: const EdgeInsets.all(12),
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 3 / 4,
             ),
-          );
-        },
+            itemCount: cards.length,
+            itemBuilder: (context, index) {
+              final card = cards[index];
+              final isNew = _isNew(card['createdAt']);
+
+              return GestureDetector(
+                onTap: () => _editCard(card),
+                onLongPress: () => _deleteCard(card.id),
+                child: Stack(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.blueGrey, width: 2),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            card['term'],
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          const Divider(height: 1, color: Colors.black45),
+                          const SizedBox(height: 8),
+                          Text(
+                            card['definitionUkr'] ?? '',
+                            style: const TextStyle(fontSize: 15),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (isNew)
+                      const Positioned(
+                        top: 6,
+                        left: 8,
+                        child: Icon(Icons.horizontal_rule, size: 16, color: Colors.blueAccent),
+                      ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }
 }
-
-

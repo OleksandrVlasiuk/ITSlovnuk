@@ -1,16 +1,40 @@
-//add_card_page.dart
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class AddCardPage extends StatelessWidget {
-  const AddCardPage({super.key});
+class AddCardPage extends StatefulWidget {
+  final String deckId;
+
+  const AddCardPage({super.key, required this.deckId});
+
+  @override
+  State<AddCardPage> createState() => _AddCardPageState();
+}
+
+class _AddCardPageState extends State<AddCardPage> {
+  final TextEditingController frontEngController = TextEditingController();
+  final TextEditingController backEngController = TextEditingController();
+  final TextEditingController backUkrController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    frontEngController.addListener(() {
+      backEngController.text = frontEngController.text;
+    });
+  }
+
+  @override
+  void dispose() {
+    frontEngController.dispose();
+    backEngController.dispose();
+    backUkrController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController frontEngController = TextEditingController();
-    final TextEditingController backEngController = TextEditingController();
-    final TextEditingController backUkrController = TextEditingController();
-
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: const Color(0xFF1C1C1C),
       appBar: AppBar(
         backgroundColor: const Color(0xFF2B2B2B),
@@ -22,9 +46,10 @@ class AddCardPage extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
               'Створення нової картки',
@@ -43,47 +68,57 @@ class AddCardPage extends StatelessWidget {
                   title: 'Задня сторона',
                   controller1: backEngController,
                   label1: 'анг',
+                  readOnly1: true,
                   controller2: backUkrController,
                   label2: 'укр',
                 ),
               ],
             ),
             const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                final newCard = {
-                  'front': frontEngController.text,
-                  'backEng': backEngController.text,
-                  'backUkr': backUkrController.text,
-                };
-                Navigator.pop(context, newCard);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            Center(
+              child: ElevatedButton(
+                onPressed: () async {
+                  final term = frontEngController.text.trim();
+                  final defEng = backEngController.text.trim();
+                  final defUkr = backUkrController.text.trim();
+
+                  if (term.isEmpty || (defEng.isEmpty && defUkr.isEmpty)) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Заповніть хоча б 2 поля")),
+                    );
+                    return;
+                  }
+
+                  final docRef = await FirebaseFirestore.instance
+                      .collection('decks')
+                      .doc(widget.deckId)
+                      .collection('cards')
+                      .add({
+                    'term': term,
+                    'definitionEng': defEng,
+                    'definitionUkr': defUkr,
+                    'createdAt': DateTime.now(),
+                  });
+
+                  await docRef.update({'id': docRef.id});
+
+                  Navigator.pop(context, {
+                    'front': term,
+                    'backEng': defEng,
+                    'backUkr': defUkr,
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: const Text('Додати'),
               ),
-              child: const Text('Додати'),
             )
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xFF2B2B2B),
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.library_books), label: 'Картки'),
-          BottomNavigationBarItem(icon: Icon(Icons.event_note), label: 'Мій план'),
-          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Статистика'),
-          BottomNavigationBarItem(icon: Icon(Icons.archive), label: 'Архів'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профіль'),
-        ],
-        currentIndex: 0,
-        onTap: (index) {
-          // Навігація між сторінками
-        },
       ),
     );
   }
@@ -92,6 +127,7 @@ class AddCardPage extends StatelessWidget {
     required String title,
     required TextEditingController controller1,
     required String label1,
+    bool readOnly1 = false,
     TextEditingController? controller2,
     String? label2,
   }) {
@@ -109,6 +145,7 @@ class AddCardPage extends StatelessWidget {
             const SizedBox(height: 10),
             TextField(
               controller: controller1,
+              readOnly: readOnly1,
               decoration: InputDecoration(labelText: label1),
             ),
             if (controller2 != null && label2 != null) ...[

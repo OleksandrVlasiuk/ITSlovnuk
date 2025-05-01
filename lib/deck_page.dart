@@ -1,115 +1,300 @@
-//deck_page.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:it_english_app_clean/services/deck_service.dart';
 import 'add_card_page.dart';
+import 'cards_list_page.dart';
 
 class DeckPage extends StatefulWidget {
+  final String deckId;
   final String title;
 
-  const DeckPage({super.key, required this.title});
+  const DeckPage({super.key, required this.deckId, required this.title});
 
   @override
   State<DeckPage> createState() => _DeckPageState();
 }
 
 class _DeckPageState extends State<DeckPage> {
-  List<Map<String, String>> cards = [
-    {'front': 'implementation'},
-    {'front': 'blunder'},
-    {'front': 'compile'},
-  ];
+  List<Map<String, String>> cards = [];
+  bool isLoading = true;
+  bool updated = false;
+  String title = '';
+  int sessionCount = 5;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF1C1C1C),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF2C2C2C),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text('ITСловник'),
-        centerTitle: false,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListView(
-          children: [
-            Text(widget.title,
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.green[400],
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Text("Перегляд", style: TextStyle(color: Colors.white)),
-                ),
-                const Spacer(),
-                Text("${cards.length}/${cards.length} >", style: const TextStyle(color: Colors.white70)),
-              ],
-            ),
-            const SizedBox(height: 20),
-            const Text("Картки", style: TextStyle(color: Colors.white70, fontSize: 18)),
-            const SizedBox(height: 12),
-            SizedBox(
-              height: 130,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: cards.length,
-                itemBuilder: (context, index) {
-                  return _buildCard(cards[index]['front'] ?? '');
-                },
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Text("Налаштування", style: TextStyle(color: Colors.white70, fontSize: 18)),
-            const SizedBox(height: 12),
-            _buildSettingItem("Додати в архів >", () {}),
-            _buildSettingItem("Нова картка >", () async {
-              final newCard = await Navigator.push<Map<String, String>>(
-                context,
-                MaterialPageRoute(builder: (_) => const AddCardPage()),
-              );
+  void initState() {
+    super.initState();
+    title = widget.title;
+    _loadCards();
+    _loadDeckInfo();
+  }
 
-              if (newCard != null && newCard['front'] != null) {
-                setState(() {
-                  cards.insert(0, newCard);
-                });
-              }
-            }),
-            _buildSettingItem("Карток на сесію : 5", null),
-            _buildSettingItem("Назва : ${widget.title}", null),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red[400],
-              ),
-              onPressed: () {},
-              child: const Text("Видалити колоду"),
-            )
+  Future<void> _loadDeckInfo() async {
+    final doc = await FirebaseFirestore.instance.collection('decks').doc(widget.deckId).get();
+    setState(() {
+      title = doc['title'] ?? title;
+      sessionCount = doc['sessionCardCount'] ?? 5;
+    });
+  }
+
+  Future<void> _loadCards() async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('decks')
+        .doc(widget.deckId)
+        .collection('cards')
+        .orderBy('createdAt', descending: true)
+        .get();
+
+    setState(() {
+      cards = snapshot.docs
+          .map((doc) => {
+        'front': (doc['term'] ?? '').toString(),
+        'backEng': (doc['definitionEng'] ?? '').toString(),
+        'backUkr': (doc['definitionUkr'] ?? '').toString(),
+        'id': doc.id.toString(),
+      })
+          .toList();
+
+      isLoading = false;
+    });
+  }
+
+  Future<void> _editDeckSettings() async {
+    final titleController = TextEditingController(text: title);
+    final countController = TextEditingController(text: sessionCount.toString());
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Редагувати колоду"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: titleController,
+              decoration: const InputDecoration(labelText: 'Назва колоди'),
+            ),
+            TextField(
+              controller: countController,
+              decoration: const InputDecoration(labelText: 'Карток на сесію'),
+              keyboardType: TextInputType.number,
+            ),
           ],
         ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Скасувати')),
+          ElevatedButton(
+            onPressed: () async {
+              final newTitle = titleController.text.trim();
+              final newCount = int.tryParse(countController.text.trim()) ?? sessionCount;
+
+              await FirebaseFirestore.instance.collection('decks').doc(widget.deckId).update({
+                'title': newTitle,
+                'sessionCardCount': newCount,
+              });
+
+              setState(() {
+                title = newTitle;
+                sessionCount = newCount;
+                updated = true;
+              });
+              Navigator.pop(context, true);
+            },
+            child: const Text('Зберегти'),
+          ),
+        ],
       ),
-      bottomNavigationBar: _buildBottomNavBar(),
     );
   }
 
-  Widget _buildCard(String word) {
-    return Container(
-      width: 100,
-      margin: const EdgeInsets.only(right: 12),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.deepPurpleAccent, width: 2),
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.white,
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        if (updated) {
+          Navigator.pop(context, true);
+          return false;
+        }
+        return true;
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFF1C1C1C),
+        appBar: AppBar(
+          backgroundColor: const Color(0xFF2C2C2C),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Navigator.maybePop(context),
+          ),
+          title: const Text(
+            'ITСловник',
+            style: TextStyle(color: Colors.white),
+          ),
+          centerTitle: true,
+          elevation: 0,
+        ),
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Padding(
+          padding: const EdgeInsets.all(16),
+          child: ListView(
+            children: [
+              Text(title,
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.green[400],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Text("Перегляд", style: TextStyle(color: Colors.white)),
+                  ),
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => CardsListPage(
+                            deckId: widget.deckId,
+                            deckTitle: title,
+                          ),
+                        ),
+                      );
+
+                      if (result == true) {
+                        await DeckService().updateCardCount(widget.deckId);
+                        updated = true;
+                        _loadCards();
+                      }
+                    },
+                    child: Text(
+                      "${cards.length}/${cards.length} >",
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              const Text("Картки", style: TextStyle(color: Colors.white70, fontSize: 18)),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 150,
+                child: cards.isEmpty
+                    ? const Center(child: Text("Немає карток", style: TextStyle(color: Colors.white38)))
+                    : ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: cards.length,
+                  itemBuilder: (context, index) {
+                    return _buildCard(
+                      cards[index]['front'] ?? '',
+                      isNew: index == 0,
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text("Налаштування", style: TextStyle(color: Colors.white70, fontSize: 18)),
+              const SizedBox(height: 12),
+              _buildSettingItem("Редагувати назву та кількість >", _editDeckSettings),
+              _buildSettingItem("Додати в архів >", () {}),
+              _buildSettingItem("Нова картка >", () async {
+                final newCard = await Navigator.push<Map<String, String>>(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => AddCardPage(deckId: widget.deckId),
+                  ),
+                );
+
+                if (newCard != null) {
+                  updated = true;
+                  _loadCards();
+                }
+              }),
+              _buildSettingItem("Карток на сесію : $sessionCount", null),
+              _buildSettingItem("Назва : $title", null),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red[400],
+                ),
+                onPressed: () async {
+                  final confirmed = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text("Підтвердження"),
+                      content: const Text("Ви дійсно хочете видалити цю колоду та всі її картки?"),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: const Text("Скасувати"),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                          child: const Text("Видалити"),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  if (confirmed == true) {
+                    await DeckService().deleteDeckWithCards(widget.deckId);
+                    if (mounted) Navigator.pop(context, true);
+                  }
+                },
+                child: const Text("Видалити колоду"),
+              )
+            ],
+          ),
+        ),
       ),
-      child: Center(
-        child: Text(word, style: const TextStyle(fontSize: 16)),
-      ),
+    );
+  }
+
+  Widget _buildCard(String word, {bool isNew = false}) {
+    return Stack(
+      children: [
+        Container(
+          width: 120,
+          margin: const EdgeInsets.only(right: 12),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Colors.indigo.shade700, width: 2),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Center(
+            child: Text(
+              word,
+              style: const TextStyle(fontSize: 16, color: Colors.black),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+        if (isNew)
+          Positioned(
+            top: 6,
+            right: 16,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade600,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Text(
+                'New',
+                style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+      ],
     );
   }
 
@@ -118,21 +303,6 @@ class _DeckPageState extends State<DeckPage> {
       title: Text(title, style: const TextStyle(color: Colors.white)),
       onTap: onTap,
       dense: true,
-    );
-  }
-
-  Widget _buildBottomNavBar() {
-    return BottomNavigationBar(
-      backgroundColor: const Color(0xFF2C2C2C),
-      selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.white54,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.view_module), label: 'Картки'),
-        BottomNavigationBarItem(icon: Icon(Icons.today), label: 'Мій план'),
-        BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Статистика'),
-        BottomNavigationBarItem(icon: Icon(Icons.archive), label: 'Архів'),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профіль'),
-      ],
     );
   }
 }

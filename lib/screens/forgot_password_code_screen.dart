@@ -1,5 +1,8 @@
+/*
 import 'package:flutter/material.dart';
 import 'forgot_password_new_password_screen.dart';
+
+/// Використовуватиметься у майбутній версії з власною обробкою коду відновлення.
 
 class ForgotPasswordCodeScreen extends StatelessWidget {
   const ForgotPasswordCodeScreen({super.key});
@@ -63,7 +66,10 @@ class ForgotPasswordCodeScreen extends StatelessWidget {
                       height: 50,
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => const ForgotPasswordNewPasswordScreen()));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const ForgotPasswordNewPasswordScreen()),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF5A5A5A),
@@ -85,3 +91,4 @@ class ForgotPasswordCodeScreen extends StatelessWidget {
     );
   }
 }
+*/

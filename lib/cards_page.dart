@@ -1,9 +1,32 @@
-// lib/cards_page.dart
+//cards_page.dart
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'models/deck.dart';
+import 'services/deck_service.dart';
 import 'deck_page.dart';
 
-class CardsPage extends StatelessWidget {
+class CardsPage extends StatefulWidget {
   const CardsPage({super.key});
+
+  @override
+  State<CardsPage> createState() => _CardsPageState();
+}
+
+class _CardsPageState extends State<CardsPage> {
+  late Future<List<Deck>> _decksFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDecks();
+  }
+
+  void _loadDecks() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      _decksFuture = DeckService().getUserDecks(user.uid);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +34,7 @@ class CardsPage extends StatelessWidget {
       backgroundColor: const Color(0xFF1C1C1C),
       appBar: AppBar(
         backgroundColor: const Color(0xFF2B2B2B),
-        automaticallyImplyLeading: false, // <--- Ось тут ключ
+        automaticallyImplyLeading: false,
         title: const Text(
           'ITСловник',
           style: TextStyle(color: Colors.white),
@@ -29,54 +52,103 @@ class CardsPage extends StatelessWidget {
               style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            _buildDeckTile(context, 'English Deck IT', 152, 10, '10хв'),
-            _buildDeckTile(context, 'English Golden words', 3000, 360, '2год'),
-            _buildDeckTile(context, 'English Phrasal Verbs', 416, 5, '3год'),
+            Expanded(
+              child: FutureBuilder<List<Deck>>(
+                future: _decksFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Помилка: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text('Немає колод.', style: TextStyle(color: Colors.white70)));
+                  }
+
+                  final decks = snapshot.data!;
+                  return ListView.builder(
+                    itemCount: decks.length,
+                    itemBuilder: (context, index) {
+                      final deck = decks[index];
+                      return _buildDeckTile(context, deck);
+                    },
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // дія додавання нової колоди
+        onPressed: () async {
+          final result = await Navigator.pushNamed(context, '/add_deck');
+          if (result == true) {
+            setState(() {
+              _loadDecks(); // оновлення після додавання
+            });
+          }
         },
         backgroundColor: Colors.white,
         child: const Icon(Icons.add, color: Colors.black),
       ),
-      // !!! Тут вже НЕ має бути BottomNavigationBar
     );
   }
 
-  Widget _buildDeckTile(BuildContext context, String title, int cards, int learned, String timeAgo) {
+  Widget _buildDeckTile(BuildContext context, Deck deck) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       color: const Color(0xFF333333),
       child: ListTile(
-        title: Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        subtitle: Row(
+        title: Text(deck.title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.style, size: 16, color: Colors.grey),
-            const SizedBox(width: 4),
-            Text('$cards', style: const TextStyle(color: Colors.grey)),
-            const SizedBox(width: 12),
-            const Icon(Icons.check_circle_outline, size: 16, color: Colors.grey),
-            const SizedBox(width: 4),
-            Text('$learned', style: const TextStyle(color: Colors.grey)),
-            const SizedBox(width: 12),
-            const Icon(Icons.access_time, size: 16, color: Colors.grey),
-            const SizedBox(width: 4),
-            Text(timeAgo, style: const TextStyle(color: Colors.grey)),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Icon(Icons.style, size: 16, color: Colors.grey),
+                const SizedBox(width: 4),
+                Text('${deck.cardCount} карток', style: const TextStyle(color: Colors.grey)),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Icon(Icons.access_time, size: 16, color: Colors.grey),
+                const SizedBox(width: 4),
+                Text('Перегляд: ${_formatDate(deck.lastViewed)}', style: const TextStyle(color: Colors.grey)),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+                const SizedBox(width: 4),
+                Text('Створено: ${_formatDate(deck.createdAt)}', style: const TextStyle(color: Colors.grey)),
+              ],
+            ),
           ],
         ),
         trailing: const Icon(Icons.chevron_right, color: Colors.white),
-        onTap: () {
-          Navigator.push(
+        onTap: () async {
+          final result = await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => DeckPage(title: title),
+              builder: (_) => DeckPage(deckId: deck.id, title: deck.title),
             ),
           );
+
+          if (result == true) {
+            await DeckService().updateCardCount(deck.id); // оновлення кількості карток
+            setState(() {
+              _loadDecks(); // оновлення списку
+            });
+          }
         },
       ),
     );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
   }
 }

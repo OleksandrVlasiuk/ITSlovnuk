@@ -1,5 +1,9 @@
+/*
 import 'package:flutter/material.dart';
-import 'login_screen.dart'; // Імпортуємо LoginScreen
+import 'login_screen.dart';
+
+/// Екран для встановлення нового пароля.
+/// Використовуватиметься у майбутній розширеній версії відновлення пароля.
 
 class ForgotPasswordNewPasswordScreen extends StatelessWidget {
   const ForgotPasswordNewPasswordScreen({super.key});
@@ -24,14 +28,11 @@ class ForgotPasswordNewPasswordScreen extends StatelessWidget {
         return;
       }
 
-      // Тут можна додати справжню зміну пароля через Firebase, якщо захочеш.
-      // Після успіху:
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => const LoginScreen()),
-            (route) => false,
+        (route) => false,
       );
 
-      // Після переходу трохи затримка, щоб без помилки:
       Future.delayed(const Duration(milliseconds: 300), () {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Пароль змінено успішно!')),
@@ -61,7 +62,7 @@ class ForgotPasswordNewPasswordScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     const Text(
-                      'Введіть код',
+                      'Новий пароль',
                       style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black),
                     ),
                   ],
@@ -141,3 +142,4 @@ class ForgotPasswordNewPasswordScreen extends StatelessWidget {
     );
   }
 }
+*/

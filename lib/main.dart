@@ -1,9 +1,9 @@
-// main.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'screens/start_screen.dart'; // Стартовий екран
-import 'main_navigation.dart';     // Навігація вкладок (після авторизації)
+import 'screens/start_screen.dart';
+import 'main_navigation.dart';
+import 'add_deck_page.dart'; // <-- додай цей імпорт
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +20,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const StartScreen(), // Стартуємо зі StartScreen
+      home: const StartScreen(),
+      routes: {
+        '/add_deck': (_) => const AddDeckPage(), // <-- маршрут для створення колоди
+      },
     );
   }
 }
+
