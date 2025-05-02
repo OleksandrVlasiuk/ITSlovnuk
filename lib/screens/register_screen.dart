@@ -1,8 +1,8 @@
-// lib/screens/register_screen.dart
+//register_screen.dart
 import 'package:flutter/material.dart';
-import '../main_navigation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../services/auth_service.dart';
-import '../cards_page.dart';
+import 'email_verification_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -15,23 +15,66 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  bool _isLoading = false;
+  String? _errorMessage;
+  bool _showPassword = false;
+
+  bool _validatePassword(String password) {
+    return password.length >= 8 &&
+        password.contains(RegExp(r'[A-Z]')) &&
+        password.contains(RegExp(r'[0-9]'));
+  }
+
+  bool _validateEmail(String email) {
+    return RegExp(
+        r'^(?!.*\.\.)(?!\.)([a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*)@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    ).hasMatch(email);
+  }
+
+
   void _register() async {
-    if (_passwordController.text.trim().length < 6) {
-      _showError('Пароль має містити не менше 6 символів');
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (!_validateEmail(email)) {
+      _showError('Некоректна електронна пошта');
       return;
     }
+
+    if (!_validatePassword(password)) {
+      _showError('Пароль має містити мінімум 8 символів, 1 велику літеру і 1 цифру');
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
     try {
-      final user = await AuthService().register(
-        _emailController.text.trim(),
-        _passwordController.text.trim(),
-      );
-      if (user != null) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const MainNavigation()));
+      final user = await AuthService().register(email, password);
+      if (user != null && !user.emailVerified) {
+        await user.sendEmailVerification();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => EmailVerificationScreen(email: email, source: 'register'),
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        _showError('Цей email вже використовується. Спробуйте увійти або скинути пароль.');
+      } else {
+        _showError('Помилка реєстрації: ${e.message}');
       }
     } catch (e) {
-      _showError('Помилка реєстрації: $e');
+      _showError('Невідома помилка: $e');
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
+
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
@@ -45,7 +88,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Верхня біла карточка
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
@@ -61,7 +103,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     IconButton(
                       icon: const Icon(Icons.arrow_back, size: 28, color: Colors.black),
                       onPressed: () {
-                        Navigator.pop(context); // Повернення назад
+                        Navigator.pop(context);
                       },
                     ),
                     const SizedBox(height: 16),
@@ -77,11 +119,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
               const SizedBox(height: 40),
-              // Поля вводу
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
                   children: [
+                    if (_errorMessage != null)
+                      Text(_errorMessage!, style: const TextStyle(color: Colors.redAccent)),
+                    const SizedBox(height: 12),
                     TextField(
                       controller: _emailController,
                       decoration: const InputDecoration(
@@ -101,17 +145,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const SizedBox(height: 20),
                     TextField(
                       controller: _passwordController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
+                      obscureText: !_showPassword,
+                      decoration: InputDecoration(
                         hintText: '******',
-                        hintStyle: TextStyle(color: Colors.white70),
+                        hintStyle: const TextStyle(color: Colors.white70),
                         labelText: 'Пароль',
-                        labelStyle: TextStyle(color: Colors.white),
-                        enabledBorder: UnderlineInputBorder(
+                        labelStyle: const TextStyle(color: Colors.white),
+                        enabledBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.white),
                         ),
-                        focusedBorder: UnderlineInputBorder(
+                        focusedBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.blueAccent),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _showPassword ? Icons.visibility_off : Icons.visibility,
+                            color: Colors.white70,
+                          ),
+                          onPressed: () => setState(() => _showPassword = !_showPassword),
                         ),
                       ),
                       style: const TextStyle(color: Colors.white),
@@ -120,17 +171,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'Не менше 6 символів',
+                        'Мінімум 8 символів, 1 велика літера та 1 цифра',
                         style: TextStyle(color: Colors.white70, fontSize: 12),
                       ),
                     ),
                     const SizedBox(height: 40),
-                    // Кнопка Зареєструватися
                     SizedBox(
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: _register,
+                        onPressed: _isLoading ? null : _register,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF5A5A5A),
                           foregroundColor: Colors.white,
@@ -138,7 +188,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        child: const Text(
+                        child: _isLoading
+                            ? const CircularProgressIndicator(color: Colors.white)
+                            : const Text(
                           'ЗАРЕЄСТРУВАТИСЯ',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,

@@ -7,12 +7,12 @@ class ForgotPasswordEmailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _emailController = TextEditingController();
+    final TextEditingController emailController = TextEditingController();
 
-    Future<void> _sendResetEmail() async {
+    Future<void> sendResetEmail() async {
       try {
         await FirebaseAuth.instance.sendPasswordResetEmail(
-          email: _emailController.text.trim(),
+          email: emailController.text.trim(),
         );
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Інструкції надіслані на вашу пошту!')),
@@ -67,7 +67,7 @@ class ForgotPasswordEmailScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     TextField(
-                      controller: _emailController,
+                      controller: emailController,
                       decoration: const InputDecoration(
                         hintText: 'example@gmail.com',
                         hintStyle: TextStyle(color: Colors.white70),
@@ -87,7 +87,7 @@ class ForgotPasswordEmailScreen extends StatelessWidget {
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: _sendResetEmail,
+                        onPressed: sendResetEmail,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF5A5A5A),
                           foregroundColor: Colors.white,

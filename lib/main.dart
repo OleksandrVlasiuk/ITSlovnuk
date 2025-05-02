@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:it_english_app_clean/screens/login_screen.dart';
+import 'change_password_page.dart';
 import 'firebase_options.dart';
 import 'screens/start_screen.dart';
-import 'main_navigation.dart';
-import 'add_deck_page.dart'; // <-- додай цей імпорт
+import 'add_deck_page.dart';
+import 'change_password_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,9 +24,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: const StartScreen(),
       routes: {
-        '/add_deck': (_) => const AddDeckPage(), // <-- маршрут для створення колоди
+        '/add_deck': (_) => const AddDeckPage(),
+        '/change_password': (_) => const ChangePasswordPage(),
+        '/login': (_) => const LoginScreen(),
       },
     );
   }
 }
-
