@@ -21,51 +21,76 @@ class _LoginScreenState extends State<LoginScreen> {
   String? _errorMessage;
   bool _showPassword = false;
 
+  bool _validatePassword(String password) {
+    return password.length >= 8 &&
+        password.contains(RegExp(r'[A-Z]')) &&
+        password.contains(RegExp(r'[0-9]'));
+  }
+
+  bool _validateEmail(String email) {
+    return RegExp(
+        r'^(?!.*\.\.)(?!\.)([a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*)@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    ).hasMatch(email);
+  }
+
   void _login() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    // 🔍 Перевірка email
+    if (!_validateEmail(email)) {
+      _showError('Некоректна електронна пошта');
+      return;
+    }
+
+    // 🔍 Перевірка пароля
+    if (!_validatePassword(password)) {
+      _showError('Пароль має містити мінімум 8 символів, 1 велику літеру і 1 цифру');
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
 
     try {
-      final user = await AuthService().login(
-        _emailController.text.trim(),
-        _passwordController.text.trim(),
-      );
+      final user = await AuthService().login(email, password);
 
-      if (user != null && user.emailVerified) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const MainNavigation()),
-        );
-      }
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'email-not-verified') {
-        // 🔁 Увійти для отримання доступу до sendEmailVerification()
-        final auth = FirebaseAuth.instance;
-        try {
-          await auth.signInWithEmailAndPassword(
-            email: _emailController.text.trim(),
-            password: _passwordController.text.trim(),
+      if (user != null) {
+        await FirebaseAuth.instance.currentUser?.reload();
+        final refreshedUser = FirebaseAuth.instance.currentUser;
+
+        if (refreshedUser?.emailVerified ?? false) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const MainNavigation()),
           );
+        } else {
+          try {
+            await refreshedUser?.sendEmailVerification();
+          } on FirebaseAuthException catch (e) {
+            if (e.code == 'too-many-requests') {
+              _showError('Забагато спроб надсилання листа. Спробуйте трохи пізніше.');
+            } else {
+              _showError('Не вдалося надіслати лист: ${e.message}');
+            }
+          }
 
-          // 🔁 Надсилаємо лист автоматично
-          final user = auth.currentUser;
-          await user?.sendEmailVerification();
-
-          // 🔁 Перенаправляємо на екран підтвердження
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (_) => EmailVerificationScreen(
-                email: _emailController.text.trim(), source: 'login'
+                email: email,
+                source: 'login',
               ),
             ),
           );
-        } catch (e) {
-          _showError('Не вдалося надіслати лист. ${e.toString()}');
         }
-      } else if (e.code == 'user-not-found' || e.code == 'wrong-password') {
+      }
+
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found' || e.code == 'wrong-password') {
         _showError('Невірна пошта або пароль.');
       } else {
         _showError('Помилка входу: ${e.message}');
@@ -76,6 +101,10 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() => _isLoading = false);
     }
   }
+
+
+
+
 
 
 

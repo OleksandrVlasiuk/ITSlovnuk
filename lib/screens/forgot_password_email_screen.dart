@@ -5,15 +5,29 @@ import 'login_screen.dart';
 class ForgotPasswordEmailScreen extends StatelessWidget {
   const ForgotPasswordEmailScreen({super.key});
 
+  // 🔍 Перевірка коректності email
+  bool _validateEmail(String email) {
+    return RegExp(
+        r'^(?!.*\.\.)(?!\.)([a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*)@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    ).hasMatch(email);
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController emailController = TextEditingController();
 
     Future<void> sendResetEmail() async {
-      try {
-        await FirebaseAuth.instance.sendPasswordResetEmail(
-          email: emailController.text.trim(),
+      final email = emailController.text.trim();
+
+      if (!_validateEmail(email)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Некоректна електронна пошта')),
         );
+        return;
+      }
+
+      try {
+        await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Інструкції надіслані на вашу пошту!')),
         );
@@ -95,7 +109,10 @@ class ForgotPasswordEmailScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        child: const Text('НАДІСЛАТИ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        child: const Text(
+                          'НАДІСЛАТИ',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
                       ),
                     ),
                   ],

@@ -20,17 +20,9 @@ class AuthService {
 
   Future<User?> login(String email, String password) async {
     final result = await _auth.signInWithEmailAndPassword(email: email, password: password);
-
-    if (!result.user!.emailVerified) {
-      await _auth.signOut();
-      throw FirebaseAuthException(
-        code: 'email-not-verified',
-        message: 'Будь ласка, підтвердіть електронну адресу перед входом.',
-      );
-    }
-
-    return result.user;
+    return result.user; // ❗️Більше нічого не викидаємо тут
   }
+
 
 
   Future<void> logout() async {

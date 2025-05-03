@@ -40,8 +40,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           child: Column(
             children: [
               if (_errorMessage != null)
-                Text(_errorMessage!, style: const TextStyle(color: Colors.redAccent)),
-              const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: Text(_errorMessage!, style: const TextStyle(color: Colors.redAccent)),
+                ),
               _buildPasswordField('Старий пароль', _oldPasswordController, _showOldPassword, () {
                 setState(() => _showOldPassword = !_showOldPassword);
               }),
@@ -134,12 +136,25 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         email: user!.email!,
         password: oldPassword,
       );
+
       await user.reauthenticateWithCredential(cred);
       await user.updatePassword(newPassword);
-      Navigator.pop(context);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Пароль успішно змінено')),
+        );
+        Navigator.pop(context);
+      }
+
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'wrong-password') {
+      if (e.code == 'wrong-password' ||
+          e.message?.toLowerCase().contains('auth credential is incorrect') == true) {
         setState(() => _errorMessage = 'Неправильний старий пароль');
+      } else if (e.code == 'weak-password') {
+        setState(() => _errorMessage = 'Новий пароль занадто слабкий');
+      } else if (e.code == 'requires-recent-login') {
+        setState(() => _errorMessage = 'Для зміни пароля потрібно увійти знову');
       } else {
         setState(() => _errorMessage = 'Помилка: ${e.message}');
       }
