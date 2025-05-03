@@ -77,7 +77,10 @@ class DeckService {
     });
   }
 
+  /// Оновити дату останнього перегляду
+  Future<void> updateLastViewed(String deckId) async {
+    await _firestore.collection('decks').doc(deckId).update({
+      'lastViewed': FieldValue.serverTimestamp(),
+    });
+  }
 }
-
-
-

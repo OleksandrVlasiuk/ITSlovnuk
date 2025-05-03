@@ -149,6 +149,13 @@ class _CardsListPageState extends State<CardsListPage> {
         ),
         body: isLoading
             ? const Center(child: CircularProgressIndicator())
+            : cards.isEmpty
+            ? const Center(
+          child: Text(
+            'Немає карток у цій колоді.',
+            style: TextStyle(color: Colors.white70, fontSize: 16),
+          ),
+        )
             : Padding(
           padding: const EdgeInsets.all(12),
           child: GridView.builder(

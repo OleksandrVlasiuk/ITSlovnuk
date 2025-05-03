@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:it_english_app_clean/services/deck_service.dart';
 import 'add_card_page.dart';
 import 'cards_list_page.dart';
+import 'learning_session_page.dart';
 
 class DeckPage extends StatefulWidget {
   final String deckId;
@@ -63,7 +64,7 @@ class _DeckPageState extends State<DeckPage> {
     final titleController = TextEditingController(text: title);
     final countController = TextEditingController(text: sessionCount.toString());
 
-    final result = await showDialog<bool>(
+    await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Редагувати колоду"),
@@ -111,11 +112,8 @@ class _DeckPageState extends State<DeckPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (updated) {
-          Navigator.pop(context, true);
-          return false;
-        }
-        return true;
+        Navigator.pop(context, updated);
+        return false;
       },
       child: Scaffold(
         backgroundColor: const Color(0xFF1C1C1C),
@@ -123,7 +121,7 @@ class _DeckPageState extends State<DeckPage> {
           backgroundColor: const Color(0xFF2C2C2C),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.maybePop(context),
+            onPressed: () => Navigator.pop(context, updated),
           ),
           title: const Text(
             'ITСловник',
@@ -143,13 +141,43 @@ class _DeckPageState extends State<DeckPage> {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.green[400],
-                      borderRadius: BorderRadius.circular(12),
+                  GestureDetector(
+                    onTap: () async {
+                      if (cards.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('У цій колоді ще немає карток')),
+                        );
+                        return;
+                      }
+
+                      await DeckService().updateLastViewed(widget.deckId);
+
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => LearningSessionPage(
+                            deckId: widget.deckId,
+                            deckTitle: title,
+                            sessionCount: sessionCount,
+                          ),
+                        ),
+                      );
+
+                      if (result == true) {
+                        await _loadDeckInfo();
+                        setState(() {
+                          updated = true;
+                        });
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.green[400],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Text("Перегляд", style: TextStyle(color: Colors.white)),
                     ),
-                    child: const Text("Перегляд", style: TextStyle(color: Colors.white)),
                   ),
                   const Spacer(),
                   GestureDetector(
@@ -166,8 +194,10 @@ class _DeckPageState extends State<DeckPage> {
 
                       if (result == true) {
                         await DeckService().updateCardCount(widget.deckId);
-                        updated = true;
-                        _loadCards();
+                        setState(() {
+                          updated = true;
+                          _loadCards();
+                        });
                       }
                     },
                     child: Text(

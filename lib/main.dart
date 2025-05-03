@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:it_english_app_clean/screens/login_screen.dart';
 import 'change_password_page.dart';
 import 'firebase_options.dart';
+import 'learning_session_page.dart';
 import 'screens/start_screen.dart';
 import 'add_deck_page.dart';
 import 'change_password_page.dart';

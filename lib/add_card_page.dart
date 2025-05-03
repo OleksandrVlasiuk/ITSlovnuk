@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../services/deck_service.dart';
 
 class AddCardPage extends StatefulWidget {
   final String deckId;
@@ -101,6 +102,8 @@ class _AddCardPageState extends State<AddCardPage> {
                   });
 
                   await docRef.update({'id': docRef.id});
+
+                  await DeckService().updateCardCount(widget.deckId);
 
                   Navigator.pop(context, {
                     'front': term,

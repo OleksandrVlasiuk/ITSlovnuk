@@ -1,4 +1,4 @@
-//cards_page.dart
+// cards_page.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'models/deck.dart';
@@ -83,7 +83,7 @@ class _CardsPageState extends State<CardsPage> {
           final result = await Navigator.pushNamed(context, '/add_deck');
           if (result == true) {
             setState(() {
-              _loadDecks(); // оновлення після додавання
+              _loadDecks();
             });
           }
         },
@@ -115,7 +115,7 @@ class _CardsPageState extends State<CardsPage> {
               children: [
                 const Icon(Icons.access_time, size: 16, color: Colors.grey),
                 const SizedBox(width: 4),
-                Text('Перегляд: ${_formatDate(deck.lastViewed)}', style: const TextStyle(color: Colors.grey)),
+                Text('Перегляд: ${_formatAgo(deck.lastViewed)}', style: const TextStyle(color: Colors.grey)),
               ],
             ),
             const SizedBox(height: 4),
@@ -138,9 +138,8 @@ class _CardsPageState extends State<CardsPage> {
           );
 
           if (result == true) {
-            await DeckService().updateCardCount(deck.id); // оновлення кількості карток
             setState(() {
-              _loadDecks(); // оновлення списку
+              _loadDecks();
             });
           }
         },
@@ -150,5 +149,20 @@ class _CardsPageState extends State<CardsPage> {
 
   String _formatDate(DateTime date) {
     return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+  }
+
+  String _formatAgo(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inSeconds < 60) {
+      return '${difference.inSeconds} с тому';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes} хв тому';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours} год тому';
+    } else {
+      return '${difference.inDays} днів тому';
+    }
   }
 }
