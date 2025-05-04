@@ -10,6 +10,7 @@ class Deck {
   final DateTime lastViewed;
   final DateTime createdAt;
   final int cardCount;
+  final DateTime? archivedAt;
 
   Deck({
     required this.id,
@@ -21,6 +22,7 @@ class Deck {
     required this.lastViewed,
     required this.createdAt,
     required this.cardCount,
+    this.archivedAt,
   });
 
   factory Deck.fromMap(String id, Map<String, dynamic> data) {
@@ -38,6 +40,7 @@ class Deck {
           ? (data['createdAt'] as Timestamp).toDate()
           : DateTime.now(),
       cardCount: data['cardCount'] ?? 0,
+      archivedAt: data['archivedAt'] != null ? (data['archivedAt'] as Timestamp).toDate() : null,
     );
   }
 
@@ -51,6 +54,7 @@ class Deck {
       'lastViewed': lastViewed,
       'createdAt': createdAt,
       'cardCount': cardCount,
+      'archivedAt': archivedAt,
     };
   }
 }

@@ -1,3 +1,5 @@
+//deck_page.dart
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:it_english_app_clean/services/deck_service.dart';
@@ -233,7 +235,6 @@ class _DeckPageState extends State<DeckPage> {
               const Text("Налаштування", style: TextStyle(color: Colors.white70, fontSize: 18)),
               const SizedBox(height: 12),
               _buildSettingItem("Редагувати назву та кількість >", _editDeckSettings),
-              _buildSettingItem("Додати в архів >", () {}),
               _buildSettingItem("Нова картка >", () async {
                 final newCard = await Navigator.push<Map<String, String>>(
                   context,
@@ -249,6 +250,41 @@ class _DeckPageState extends State<DeckPage> {
               }),
               _buildSettingItem("Карток на сесію : $sessionCount", null),
               _buildSettingItem("Назва : $title", null),
+              _buildSettingItem("Додати в архів >", () async {
+                final confirmed = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text("Підтвердження"),
+                    content: const Text("Ви дійсно хочете архівувати цю колоду?"),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text("Скасувати"),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text("Архівувати"),
+                      )
+,
+                    ],
+                  ),
+                );
+
+                if (confirmed == true) {
+                  await DeckService().archiveDeck(widget.deckId);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Колоду архівовано')),
+                    );
+                    Navigator.pop(context, true); // оновлює список колод
+                  }
+                }
+              }),
+
               const SizedBox(height: 10),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(

@@ -1,3 +1,4 @@
+//deck_service.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/deck.dart';
 
@@ -37,8 +38,12 @@ class DeckService {
 
   /// Архівувати колоду
   Future<void> archiveDeck(String deckId) async {
-    await _firestore.collection('decks').doc(deckId).update({'isArchived': true});
+    await _firestore.collection('decks').doc(deckId).update({
+      'isArchived': true,
+      'archivedAt': FieldValue.serverTimestamp(),
+    });
   }
+
 
   /// Зробити колоду публічною
   Future<void> makeDeckPublic(String deckId) async {
@@ -83,4 +88,19 @@ class DeckService {
       'lastViewed': FieldValue.serverTimestamp(),
     });
   }
+
+  /// Отримати всі архівовані колоди користувача
+  Future<List<Deck>> getArchivedDecks(String userId) async {
+    final snapshot = await _firestore
+        .collection('decks')
+        .where('userId', isEqualTo: userId)
+        .where('isArchived', isEqualTo: true)
+        .orderBy('archivedAt', descending: true)
+        .get();
+
+    return snapshot.docs
+        .map((doc) => Deck.fromMap(doc.id, doc.data()))
+        .toList();
+  }
+
 }
