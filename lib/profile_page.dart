@@ -1,8 +1,9 @@
-// Профіль без аватара і без нікнейму (тимчасово)
+//profile_page.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:it_english_app_clean/screens/splash_screen.dart';
+import 'package:it_english_app_clean/screens/start_screen.dart';
+import 'package:it_english_app_clean/services/auth_service.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -37,8 +38,6 @@ class _ProfilePageState extends State<ProfilePage> {
               style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 32),
-
-            // Пошта (без стрілки)
             Row(
               children: [
                 Expanded(
@@ -49,7 +48,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ],
             ),
-
             const SizedBox(height: 24),
             _buildProfileItem('Змінити пароль', '', () {
               Navigator.pushNamed(context, '/change_password');
@@ -57,43 +55,51 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 24),
             _buildProfileItem('Видалити профіль', '', () async {
               final passwordController = TextEditingController();
+              bool showPassword = false;
+
               final confirmed = await showDialog<bool>(
                 context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text("Підтвердження"),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text("Введіть пароль для підтвердження видалення акаунта."),
-                      const SizedBox(height: 12),
-                      TextField(
-                        controller: passwordController,
-                        obscureText: true,
-                        decoration: const InputDecoration(labelText: 'Пароль'),
-                      ),
-                    ],
-                  ),
-                  actions: [
-                    TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Скасувати")),
-                    ElevatedButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                      child: const Text("Видалити"),
-                    ),
-                  ],
-                ),
+                builder: (context) {
+                  return StatefulBuilder(
+                    builder: (context, setState) {
+                      return AlertDialog(
+                        title: const Text("Підтвердження"),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text("Введіть пароль для підтвердження видалення акаунта."),
+                            const SizedBox(height: 12),
+                            TextField(
+                              controller: passwordController,
+                              obscureText: !showPassword,
+                              decoration: InputDecoration(
+                                labelText: 'Пароль',
+                                suffixIcon: IconButton(
+                                  icon: Icon(showPassword ? Icons.visibility_off : Icons.visibility),
+                                  onPressed: () => setState(() => showPassword = !showPassword),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            child: const Text("Скасувати"),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => Navigator.pop(context, true),
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                            child: const Text("Видалити"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
               );
 
               if (confirmed == true) {
-                final user = FirebaseAuth.instance.currentUser;
-
-                if (user == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Користувач не авторизований.")),
-                  );
-                  return;
-                }
-
                 final password = passwordController.text.trim();
                 if (password.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -102,32 +108,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   return;
                 }
 
-                try {
-                  final cred = EmailAuthProvider.credential(
-                    email: user.email!,
-                    password: password,
-                  );
-                  await user.reauthenticateWithCredential(cred);
-                  await user.delete();
-
-                  Navigator.pushReplacementNamed(context, '/login');
-                } on FirebaseAuthException catch (e) {
-                  if (e.code == 'wrong-password') {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Невірний пароль.")),
-                    );
-                  } else if (e.code == 'requires-recent-login') {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Потрібно повторно увійти перед видаленням акаунта.")),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Помилка: ${e.message}")),
-                    );
-                  }
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Невідома помилка: $e")),
+                final success = await AuthService().deleteAccountAndData(context, password);
+                if (success && context.mounted) {
+                  await Future.delayed(const Duration(seconds: 1));
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (_) => const StartScreen()),
+                        (route) => false,
                   );
                 }
               }
@@ -154,11 +141,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 if (context.mounted) {
                   Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (_) => const SplashScreen()),
+                    MaterialPageRoute(builder: (_) => const StartScreen()),
                         (route) => false,
                   );
                 }
-
               }
             }),
           ],

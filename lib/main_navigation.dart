@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:it_english_app_clean/plan_page.dart';
-import 'cards_page.dart';
-import 'statistics_page.dart';
-import 'archive_page.dart'; // <-- Додаємо
-import 'profile_page.dart'; // <-- Додаємо
+import 'package:it_english_app_clean/cards_page.dart';
+import 'package:it_english_app_clean/statistics_page.dart';
+import 'package:it_english_app_clean/archive_page.dart';
+import 'package:it_english_app_clean/profile_page.dart';
+import 'package:it_english_app_clean/admin_panel_page.dart'; // 🛡️ додаємо
 
 class MainNavigation extends StatefulWidget {
-  const MainNavigation({super.key});
+  final bool isAdmin; // 🛡️ приймаємо роль
+
+  const MainNavigation({super.key, this.isAdmin = false});
 
   @override
   State<MainNavigation> createState() => _MainNavigationState();
@@ -14,14 +17,20 @@ class MainNavigation extends StatefulWidget {
 
 class _MainNavigationState extends State<MainNavigation> {
   int _currentIndex = 0;
+  late final List<Widget> _pages;
 
-  final List<Widget> _pages = const [
-    CardsPage(),
-    PlanPage(),
-    StatisticsPage(),
-    ArchivePage(),
-    ProfilePage(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      const CardsPage(),
+      const PlanPage(),
+      const StatisticsPage(),
+      const ArchivePage(),
+      const ProfilePage(),
+      if (widget.isAdmin) const AdminPanelPage(), // 🛡️ вкладка
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +57,8 @@ class _MainNavigationState extends State<MainNavigation> {
           _buildNavItem(Icons.bar_chart_outlined, "Статистика", 2),
           _buildNavItem(Icons.archive_outlined, "Архів", 3),
           _buildNavItem(Icons.person_outline, "Профіль", 4),
+          if (widget.isAdmin)
+            _buildNavItem(Icons.shield_outlined, "Модерація", 5), // 🛡️
         ],
       ),
     );

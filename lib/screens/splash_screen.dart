@@ -1,44 +1,64 @@
-import 'package:flutter/material.dart';
+// lib/screens/splash_screen.dart
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import '../services/auth_service.dart';
 import '../main_navigation.dart';
-import 'email_verification_screen.dart';
+import 'login_screen.dart';
 import 'start_screen.dart';
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<User?>(
-      future: _checkUser(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            backgroundColor: Color(0xFF1C1C1C),
-            body: Center(child: CircularProgressIndicator(color: Colors.white)),
-          );
-        }
+  State<SplashScreen> createState() => _SplashScreenState();
+}
 
-        final user = snapshot.data;
-
-        if (user != null && user.emailVerified) {
-          return const MainNavigation(); // 🔓 Успішно авторизований
-        } else if (user != null && !user.emailVerified) {
-          return EmailVerificationScreen(
-            email: user.email ?? '',
-            source: 'login',
-          ); // ✉️ Пошта не підтверджена
-        } else {
-          return const StartScreen(); // ❌ Користувач не авторизований
-        }
-      },
-    );
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, _checkUser); // 👈 уникає setState during build
   }
 
-  Future<User?> _checkUser() async {
-    await Future.delayed(const Duration(milliseconds: 300)); // трошки затримки для плавності
+  Future<void> _checkUser() async {
     final user = FirebaseAuth.instance.currentUser;
-    await user?.reload(); // оновлюємо дані
-    return FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      try {
+        await user.reload();
+        final refreshedUser = FirebaseAuth.instance.currentUser;
+
+        if (refreshedUser != null && refreshedUser.emailVerified) {
+          final isAdmin = await AuthService().isAdmin();
+
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => MainNavigation(isAdmin: isAdmin),
+              ),
+            );
+          }
+          return;
+        }
+      } catch (_) {}
+    }
+
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const StartScreen()), // ✅ тепер сюди
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      backgroundColor: Color(0xFF1C1C1C),
+      body: Center(
+        child: CircularProgressIndicator(color: Colors.white),
+      ),
+    );
   }
 }
