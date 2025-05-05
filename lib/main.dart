@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:it_english_app_clean/screens/login_screen.dart';
+import 'package:it_english_app_clean/screens/splash_screen.dart';
 import 'change_password_page.dart';
 import 'firebase_options.dart';
 import 'learning_session_page.dart';
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const StartScreen(),
+      home: const SplashScreen(),
       routes: {
         '/add_deck': (_) => const AddDeckPage(),
         '/change_password': (_) => const ChangePasswordPage(),

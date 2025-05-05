@@ -2,6 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:it_english_app_clean/screens/splash_screen.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -150,7 +151,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
               if (confirmed == true) {
                 await FirebaseAuth.instance.signOut();
-                Navigator.pushReplacementNamed(context, '/login');
+                if (context.mounted) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (_) => const SplashScreen()),
+                        (route) => false,
+                  );
+                }
+
               }
             }),
           ],
