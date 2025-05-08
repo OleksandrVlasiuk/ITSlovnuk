@@ -1,4 +1,3 @@
-//deck_service.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/deck.dart';
 
@@ -8,7 +7,37 @@ class DeckService {
   /// Створити нову колоду
   Future<void> createDeck(Deck deck) async {
     final docRef = await _firestore.collection('decks').add(deck.toMap());
-    await docRef.update({'id': docRef.id}); // Зберігаємо id також в документі (опційно)
+    await docRef.update({'id': docRef.id});
+  }
+
+  /// Подати колоду на модерацію
+  Future<void> submitForModeration(String deckId) async {
+    await _firestore.collection('decks').doc(deckId).update({
+      'moderationStatus': 'pending',
+      'moderationNote': null,
+      'isPublic': false,
+    });
+  }
+
+  /// Схвалити колоду
+  Future<void> approveDeck(String deckId) async {
+    await _firestore.collection('decks').doc(deckId).update({
+      'moderationStatus': 'approved',
+      'moderationNote': null,
+      'isPublic': true,
+      'moderatedAt': FieldValue.serverTimestamp(),
+      'publishedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  /// Відхилити колоду з причиною
+  Future<void> rejectDeck(String deckId, String reason) async {
+    await _firestore.collection('decks').doc(deckId).update({
+      'moderationStatus': 'rejected',
+      'moderationNote': reason,
+      'isPublic': false,
+      'moderatedAt': FieldValue.serverTimestamp(),
+    });
   }
 
   /// Отримати всі неархівовані колоди користувача
@@ -44,30 +73,31 @@ class DeckService {
     });
   }
 
-
-  /// Зробити колоду публічною
+  /// Зробити колоду публічною вручну (не через модерацію)
   Future<void> makeDeckPublic(String deckId) async {
-    await _firestore.collection('decks').doc(deckId).update({'isPublic': true});
+    await _firestore.collection('decks').doc(deckId).update({
+      'isPublic': true,
+      'publishedAt': FieldValue.serverTimestamp(),
+    });
   }
 
-  /// Видалити колоду
+  /// Видалити колоду з усіма картками
   Future<void> deleteDeckWithCards(String deckId) async {
     final deckRef = _firestore.collection('decks').doc(deckId);
     final cardsRef = deckRef.collection('cards');
 
     final batch = _firestore.batch();
-
     final cardsSnapshot = await cardsRef.get();
+
     for (final doc in cardsSnapshot.docs) {
       batch.delete(doc.reference);
     }
 
-    batch.delete(deckRef); // видаляємо саму колоду
-
+    batch.delete(deckRef);
     await batch.commit();
   }
 
-  /// Оновити кількість карток у колоді (повна синхронізація)
+  /// Оновити кількість карток у колоді
   Future<void> updateCardCount(String deckId) async {
     final cardsSnapshot = await _firestore
         .collection('decks')
@@ -102,5 +132,4 @@ class DeckService {
         .map((doc) => Deck.fromMap(doc.id, doc.data()))
         .toList();
   }
-
 }

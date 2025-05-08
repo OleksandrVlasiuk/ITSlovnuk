@@ -4,7 +4,7 @@ import 'package:it_english_app_clean/cards_page.dart';
 import 'package:it_english_app_clean/statistics_page.dart';
 import 'package:it_english_app_clean/archive_page.dart';
 import 'package:it_english_app_clean/profile_page.dart';
-import 'package:it_english_app_clean/admin_panel_page.dart'; // 🛡️ додаємо
+import 'package:it_english_app_clean/admin/admin_panel_page.dart'; // 🛡️ додаємо
 
 class MainNavigation extends StatefulWidget {
   final bool isAdmin; // 🛡️ приймаємо роль

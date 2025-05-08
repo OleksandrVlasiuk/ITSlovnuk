@@ -7,10 +7,14 @@ class Deck {
   final int sessionCardCount;
   final bool isArchived;
   final bool isPublic;
+  final String? moderationStatus;
+  final String? moderationNote;
   final DateTime lastViewed;
   final DateTime createdAt;
   final int cardCount;
   final DateTime? archivedAt;
+  final DateTime? moderatedAt;   // NEW
+  final DateTime? publishedAt;   // NEW
 
   Deck({
     required this.id,
@@ -19,10 +23,14 @@ class Deck {
     required this.sessionCardCount,
     required this.isArchived,
     required this.isPublic,
+    this.moderationStatus,
+    this.moderationNote,
     required this.lastViewed,
     required this.createdAt,
     required this.cardCount,
     this.archivedAt,
+    this.moderatedAt,
+    this.publishedAt,
   });
 
   factory Deck.fromMap(String id, Map<String, dynamic> data) {
@@ -33,6 +41,8 @@ class Deck {
       sessionCardCount: data['sessionCardCount'] ?? 5,
       isArchived: data['isArchived'] ?? false,
       isPublic: data['isPublic'] ?? false,
+      moderationStatus: data['moderationStatus'],
+      moderationNote: data['moderationNote'],
       lastViewed: data['lastViewed'] != null
           ? (data['lastViewed'] as Timestamp).toDate()
           : (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
@@ -40,7 +50,15 @@ class Deck {
           ? (data['createdAt'] as Timestamp).toDate()
           : DateTime.now(),
       cardCount: data['cardCount'] ?? 0,
-      archivedAt: data['archivedAt'] != null ? (data['archivedAt'] as Timestamp).toDate() : null,
+      archivedAt: data['archivedAt'] != null
+          ? (data['archivedAt'] as Timestamp).toDate()
+          : null,
+      moderatedAt: data['moderatedAt'] != null
+          ? (data['moderatedAt'] as Timestamp).toDate()
+          : null,
+      publishedAt: data['publishedAt'] != null
+          ? (data['publishedAt'] as Timestamp).toDate()
+          : null,
     );
   }
 
@@ -51,10 +69,14 @@ class Deck {
       'sessionCardCount': sessionCardCount,
       'isArchived': isArchived,
       'isPublic': isPublic,
+      if (moderationStatus != null) 'moderationStatus': moderationStatus,
+      if (moderationNote != null) 'moderationNote': moderationNote,
       'lastViewed': lastViewed,
       'createdAt': createdAt,
       'cardCount': cardCount,
       'archivedAt': archivedAt,
+      if (moderatedAt != null) 'moderatedAt': moderatedAt,
+      if (publishedAt != null) 'publishedAt': publishedAt,
     };
   }
 }
