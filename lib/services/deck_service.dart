@@ -1,3 +1,4 @@
+//deck_service.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/deck.dart';
 
@@ -10,35 +11,92 @@ class DeckService {
     await docRef.update({'id': docRef.id});
   }
 
-  /// Подати колоду на модерацію
+  /// Подати нову колоду на модерацію
   Future<void> submitForModeration(String deckId) async {
-    await _firestore.collection('decks').doc(deckId).update({
+    await FirebaseFirestore.instance.collection('decks').doc(deckId).update({
       'moderationStatus': 'pending',
       'moderationNote': null,
-      'isPublic': false,
+      'moderatedAt': null,
+      'publishedAt': null,
+      // НЕ встановлюємо isPublic: true!
     });
   }
 
-  /// Схвалити колоду
-  Future<void> approveDeck(String deckId) async {
-    await _firestore.collection('decks').doc(deckId).update({
-      'moderationStatus': 'approved',
+
+  /// Подати оновлення до вже існуючої публічної колоди
+  Future<void> submitUpdateForModeration(String deckId) async {
+    await FirebaseFirestore.instance.collection('decks').doc(deckId).update({
+      'moderationStatus': 'pending',
       'moderationNote': null,
-      'isPublic': true,
-      'moderatedAt': FieldValue.serverTimestamp(),
-      'publishedAt': FieldValue.serverTimestamp(),
+      'moderatedAt': null,
+      // не чіпаємо isPublic
     });
   }
+
+
+  /// Схвалити колоду (з урахуванням дублювання)
+  Future<void> approveDeck(String deckId) async {
+    final deckRef = FirebaseFirestore.instance.collection('decks').doc(deckId);
+    final deckSnap = await deckRef.get();
+    if (!deckSnap.exists) return;
+
+    final deckData = deckSnap.data()!;
+    final now = DateTime.now();
+
+    // оновлюємо статус у deck
+    await deckRef.update({
+      'moderationStatus': 'approved',
+      'moderatedAt': now,
+      'publishedAt': now,
+      'isPublic': true, // тільки ТУТ стає публічною
+    });
+
+    // оновлюємо / створюємо published_deck
+    final publishedDeckRef =
+    FirebaseFirestore.instance.collection('published_decks').doc(deckId);
+
+    final existingSnap = await publishedDeckRef.get();
+
+    final publishedData = {
+      'deckId': deckId,
+      'userId': deckData['userId'],
+      'title': deckData['title'],
+      'sessionCardCount': deckData['sessionCardCount'],
+      'publicationMode': 'temporary',
+      'publishedAt': now,
+      'isActive': true,
+    };
+
+    if (existingSnap.exists) {
+      await publishedDeckRef.update(publishedData);
+    } else {
+      await publishedDeckRef.set(publishedData);
+    }
+  }
+
+
+  Future<void> publishPermanently(String deckId) async {
+    final snap = await FirebaseFirestore.instance
+        .collection('published_decks')
+        .doc(deckId)
+        .get();
+
+    if (snap.exists && snap.data()?['isActive'] == true) {
+      await snap.reference.update({'publicationMode': 'permanent'});
+    }
+  }
+
 
   /// Відхилити колоду з причиною
   Future<void> rejectDeck(String deckId, String reason) async {
-    await _firestore.collection('decks').doc(deckId).update({
+    await FirebaseFirestore.instance.collection('decks').doc(deckId).update({
       'moderationStatus': 'rejected',
       'moderationNote': reason,
-      'isPublic': false,
-      'moderatedAt': FieldValue.serverTimestamp(),
+      'moderatedAt': DateTime.now(),
+      // isPublic не змінюється (може бути ще не публічною)
     });
   }
+
 
   /// Отримати всі неархівовані колоди користувача
   Future<List<Deck>> getUserDecks(String userId) async {
@@ -131,5 +189,89 @@ class DeckService {
     return snapshot.docs
         .map((doc) => Deck.fromMap(doc.id, doc.data()))
         .toList();
+  }
+
+  Future<Map<String, dynamic>> getDeckChanges(String deckId) async {
+    final firestore = FirebaseFirestore.instance;
+
+    final currentDeckRef = firestore.collection('decks').doc(deckId);
+    final currentDeckSnap = await currentDeckRef.get();
+    final currentDeckData = currentDeckSnap.data();
+
+    if (currentDeckData == null) {
+      throw Exception("Deck not found");
+    }
+
+    final currentTitle = currentDeckData['title'];
+
+    // Якщо колода ще не була опублікована — ніяких змін не показуємо
+    final publishedSnapshot = await firestore
+        .collection('published_decks')
+        .where('deckId', isEqualTo: deckId)
+        .where('isActive', isEqualTo: true)
+        .limit(1)
+        .get();
+
+    if (publishedSnapshot.docs.isEmpty) {
+      return {
+        'titleChanged': false, // ← ключова зміна
+        'addedCards': [],
+        'removedCards': [],
+        'modifiedCards': [],
+      };
+    }
+
+    final publishedDoc = publishedSnapshot.docs.first;
+    final publishedDeckData = publishedDoc.data();
+    final publishedTitle = publishedDeckData['title'];
+
+    final titleChanged = currentTitle != publishedTitle;
+
+    final currentCardsSnap = await currentDeckRef.collection('cards').get();
+    final publishedCardsSnap = await publishedDoc.reference.collection('cards').get();
+
+    final currentCards = { for (var doc in currentCardsSnap.docs) doc.id: doc.data() };
+    final publishedCards = { for (var doc in publishedCardsSnap.docs) doc.id: doc.data() };
+
+    final addedCards = <Map<String, dynamic>>[];
+    final removedCards = <Map<String, dynamic>>[];
+    final modifiedCards = <Map<String, dynamic>>[];
+
+    for (final entry in currentCards.entries) {
+      final id = entry.key;
+      final currentData = entry.value;
+
+      if (!publishedCards.containsKey(id)) {
+        addedCards.add({...currentData, 'id': id});
+      } else {
+        final publishedData = publishedCards[id];
+        if (publishedData != null && !_areCardContentsEqual(currentData, publishedData)) {
+          modifiedCards.add({...currentData, 'id': id});
+        }
+      }
+    }
+
+    for (final entry in publishedCards.entries) {
+      final id = entry.key;
+      if (!currentCards.containsKey(id)) {
+        removedCards.add({...entry.value, 'id': id});
+      }
+    }
+
+    return {
+      'titleChanged': titleChanged,
+      'addedCards': addedCards,
+      'removedCards': removedCards,
+      'modifiedCards': modifiedCards,
+      'hasChanges': titleChanged || addedCards.isNotEmpty || removedCards.isNotEmpty || modifiedCards.isNotEmpty,
+    };
+
+  }
+
+
+  bool _areCardContentsEqual(Map<String, dynamic> a, Map<String, dynamic> b) {
+    return a['term'] == b['term'] &&
+        a['definitionEng'] == b['definitionEng'] &&
+        a['definitionUkr'] == b['definitionUkr'];
   }
 }

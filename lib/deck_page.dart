@@ -30,6 +30,8 @@ class _DeckPageState extends State<DeckPage> {
   String title = '';
   int sessionCount = 5;
   static const int _minCardsForModeration = 5;
+  String? publicationMode; // "temporary" | "permanent"
+
 
   @override
   void initState() {
@@ -37,20 +39,25 @@ class _DeckPageState extends State<DeckPage> {
     title = widget.title;
     _loadCards();
     _loadDeckInfo();
+    _loadPublicationInfo();
   }
 
   Future<void> _loadDeckInfo() async {
     final doc = await FirebaseFirestore.instance.collection('decks').doc(widget.deckId).get();
-    setState(() {
-      title = doc['title'] ?? title;
-      sessionCount = doc['sessionCardCount'] ?? 5;
-      moderationStatus = doc['moderationStatus'];
-      moderationNote = doc['moderationNote'];
-      moderatedAt = doc['moderatedAt'] != null ? (doc['moderatedAt'] as Timestamp).toDate() : null;
-      publishedAt = doc['publishedAt'] != null ? (doc['publishedAt'] as Timestamp).toDate() : null;
+    final data = doc.data();
 
+    if (data == null) return;
+
+    setState(() {
+      title = data['title'] ?? title;
+      sessionCount = data['sessionCardCount'] ?? 5;
+      moderationStatus = data.containsKey('moderationStatus') ? data['moderationStatus'] : null;
+      moderationNote = data.containsKey('moderationNote') ? data['moderationNote'] : null;
+      moderatedAt = data['moderatedAt'] != null ? (data['moderatedAt'] as Timestamp).toDate() : null;
+      publishedAt = data['publishedAt'] != null ? (data['publishedAt'] as Timestamp).toDate() : null;
     });
   }
+
 
   Future<void> _loadCards() async {
     final snapshot = await FirebaseFirestore.instance
@@ -423,132 +430,309 @@ class _DeckPageState extends State<DeckPage> {
     );
   }
 
-  Widget _buildModerationStatusBlock() {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blueGrey,
-        foregroundColor: Colors.white,
-      ),
-      onPressed: () => _showModerationDialog(context),
-      child: const FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Text("Публікація / Статус"),
-      ),
-    );
-  }
 
-  void _showModerationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        if (moderationStatus == null) {
-          return AlertDialog(
-            title: const Text("Подати на модерацію"),
-            content: Text('Колода буде перевірена модератором. Необхідно щонайменше $_minCardsForModeration карток.'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("Скасувати"),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  if (cards.length < _minCardsForModeration) {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Мінімум $_minCardsForModeration карток для подачі')),
-                    );
-                    return;
-                  }
+  void _showModerationDialog(BuildContext context) async {
+    final publishedSnap = await FirebaseFirestore.instance
+        .collection('published_decks')
+        .where('deckId', isEqualTo: widget.deckId)
+        .where('isActive', isEqualTo: true)
+        .limit(1)
+        .get();
 
-                  await DeckService().submitForModeration(widget.deckId);
+    final isPublished = publishedSnap.docs.isNotEmpty;
+    final currentPublicationMode = isPublished
+        ? publishedSnap.docs.first.data()['publicationMode'] ?? 'temporary'
+        : null;
+
+    if (!isPublished && moderationStatus == null) {
+      // КОЛОДА ЩЕ НЕ ПУБЛІКОВАНА
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Подати на модерацію"),
+          content: Text('Колода буде перевірена модератором. Необхідно щонайменше $_minCardsForModeration карток.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Скасувати"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (cards.length < _minCardsForModeration) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Мінімум $_minCardsForModeration карток для подачі')),
+                  );
+                  return;
+                }
+
+                await DeckService().submitForModeration(widget.deckId);
+
+                if (mounted) {
                   setState(() {
                     moderationStatus = 'pending';
                     updated = true;
                   });
+                }
+
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Колода подана на модерацію")),
+                );
+              },
+              child: const Text("Подати"),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    if (moderationStatus == 'pending') {
+      showDialog(
+        context: context,
+        builder: (_) => const AlertDialog(
+          title: Text("Статус модерації"),
+          content: Text("⏳ Колода перебуває на перевірці модератором."),
+        ),
+      );
+      return;
+    }
+
+    if (moderationStatus == 'rejected') {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text("Колода відхилена"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Модератор відхилив колоду.'),
+              if (moderationNote != null) ...[
+                const SizedBox(height: 8),
+                Text('Причина: $moderationNote'),
+              ],
+              if (moderatedAt != null) ...[
+                const SizedBox(height: 8),
+                Text('Дата перевірки: ${_formatDate(moderatedAt!)}'),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Скасувати"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (cards.length < _minCardsForModeration) {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Колода подана на модерацію")),
+                    SnackBar(content: Text('Мінімум $_minCardsForModeration карток для подачі')),
                   );
-                },
-                child: const Text("Подати"),
-              ),
-            ],
-          );
-        }
+                  return;
+                }
 
-        if (moderationStatus == 'pending') {
-          return const AlertDialog(
-            title: Text("Статус модерації"),
-            content: Text("⏳ Колода перебуває на перевірці модератором."),
-          );
-        }
+                await DeckService().submitForModeration(widget.deckId);
 
-        if (moderationStatus == 'rejected') {
-          return AlertDialog(
-            title: const Text("Колода відхилена"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Модератор відхилив колоду.'),
-                if (moderationNote != null) ...[
-                  const SizedBox(height: 8),
-                  Text('Причина: $moderationNote'),
-                ],
-                if (moderatedAt != null) ...[
-                  const SizedBox(height: 8),
-                  Text('Дата перевірки: ${_formatDate(moderatedAt!)}'),
-                ],
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("Скасувати"),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  await DeckService().submitForModeration(widget.deckId);
+                if (mounted) {
                   setState(() {
                     moderationStatus = 'pending';
                     moderationNote = null;
                     moderatedAt = null;
                     updated = true;
                   });
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Колода повторно подана на модерацію")),
-                  );
-                },
-                child: const Text("Повторно подати"),
-              ),
-            ],
-          );
-        }
+                }
 
-        if (moderationStatus == 'approved') {
-          return AlertDialog(
-            title: const Text("Опубліковано"),
-            content: Text("✅ Колода була опублікована ${_formatDate(publishedAt!)}"),
-            actions: [
-              TextButton(
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Колода повторно подана на модерацію")),
+                );
+              },
+              child: const Text("Повторно подати"),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    if (moderationStatus == 'approved' && isPublished) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          titlePadding: const EdgeInsets.only(left: 24, top: 24, right: 12),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text("Опубліковано"),
+              IconButton(
+                icon: const Icon(Icons.close, color: Colors.grey),
                 onPressed: () => Navigator.pop(context),
-                child: const Text("Гаразд"),
               ),
             ],
-          );
-        }
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("✅ Колода була опублікована ${_formatDate(publishedAt!)}"),
+              const SizedBox(height: 10),
+              Text(currentPublicationMode == 'permanent'
+                  ? "🟢 Публікація назавжди"
+                  : "🕓 Тимчасова публікація"),
+            ],
+          ),
+          actionsPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          actions: currentPublicationMode == 'permanent'
+              ? [] // Назавжди — не можна нічого більше робити
+              : [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Flexible(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      await DeckService().publishPermanently(widget.deckId);
+                      await _loadPublicationInfo();
+                      setState(() {
+                        updated = true;
+                        publicationMode = 'permanent';
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Колода опублікована назавжди")),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey[700],
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Row(
+                        children: [
+                          Icon(Icons.lock, size: 16),
+                          SizedBox(width: 6),
+                          Text("Назавжди"),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      await DeckService().submitUpdateForModeration(widget.deckId);
+                      setState(() {
+                        moderationStatus = 'pending';
+                        updated = true;
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Оновлення подано на модерацію")),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Row(
+                        children: [
+                          Icon(Icons.update, size: 16),
+                          SizedBox(width: 6),
+                          Text("Оновити"),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      for (final doc in publishedSnap.docs) {
+                        await doc.reference.update({'isActive': false});
+                      }
 
-        return const SizedBox.shrink();
-      },
+                      await FirebaseFirestore.instance.collection('decks').doc(widget.deckId).update({
+                        'moderationStatus': null,
+                        'publishedAt': null,
+                        'moderatedAt': null,
+                        'isPublic': false,
+                      });
+
+                      setState(() {
+                        moderationStatus = null;
+                        publicationMode = null;
+                        updated = true;
+                      });
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Колоду знято з публікації")),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete_outline, size: 16),
+                          SizedBox(width: 6),
+                          Text("Забрати"),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    // fallback
+    showDialog(
+      context: context,
+      builder: (_) => const AlertDialog(
+        title: Text("Стан колоди"),
+        content: Text("Неможливо визначити поточний статус."),
+      ),
     );
   }
+
+
 
 
   String _formatDate(DateTime date) {
     return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
   }
 
+  Future<void> _loadPublicationInfo() async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('published_decks')
+        .where('deckId', isEqualTo: widget.deckId)
+        .where('isActive', isEqualTo: true)
+        .limit(1)
+        .get();
+
+    if (snapshot.docs.isNotEmpty) {
+      final data = snapshot.docs.first.data();
+      setState(() {
+        publicationMode = data['publicationMode'] ?? 'temporary';
+      });
+    }
+  }
 
 }
 
