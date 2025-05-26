@@ -18,7 +18,7 @@ class DeckService {
       'moderationNote': null,
       'moderatedAt': null,
       'publishedAt': null,
-      // НЕ встановлюємо isPublic: true!
+      'submittedAt': FieldValue.serverTimestamp(),
     });
   }
 
@@ -29,7 +29,7 @@ class DeckService {
       'moderationStatus': 'pending',
       'moderationNote': null,
       'moderatedAt': null,
-      // не чіпаємо isPublic
+      'submittedAt': FieldValue.serverTimestamp(),
     });
   }
 

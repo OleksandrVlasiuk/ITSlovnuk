@@ -27,14 +27,17 @@ class _CardManagmentSectionState extends State<CardManagmentSection> {
 
   String title = '';
   String userEmail = '';
+  String role = 'user';
   String moderationStatus = '';
   String publicationMode = '';
-  DateTime? createdAt;
+  DateTime? submittedAt;
   DateTime? publishedAt;
   bool isActive = true;
   bool wasEverPublished = false;
   String moderatedBy = '';
+  DateTime? moderatedAt;
   String adminNote = '';
+  int addedCount = 0;
 
   @override
   void initState() {
@@ -53,8 +56,9 @@ class _CardManagmentSectionState extends State<CardManagmentSection> {
       title = data['title'] ?? 'Без назви';
       moderationStatus = data['moderationStatus'] ?? '';
       publicationMode = data['publicationMode'] ?? '';
-      createdAt = (data['createdAt'] as Timestamp?)?.toDate();
+      submittedAt = (data['submittedAt'] as Timestamp?)?.toDate();
       publishedAt = (data['publishedAt'] as Timestamp?)?.toDate();
+      moderatedAt = (data['moderatedAt'] as Timestamp?)?.toDate();
 
       if (widget.collection == 'published_decks') {
         isActive = data['isActive'] ?? true;
@@ -66,7 +70,9 @@ class _CardManagmentSectionState extends State<CardManagmentSection> {
 
       final userId = data['userId'] ?? '';
       final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
-      userEmail = userDoc.data()?['email'] ?? 'Невідомо';
+      final userData = userDoc.data();
+      userEmail = userData?['email'] ?? 'Невідомо';
+      role = userData?['role'] ?? 'user';
     }
 
     final cardsSnapshot = await FirebaseFirestore.instance
@@ -104,7 +110,7 @@ class _CardManagmentSectionState extends State<CardManagmentSection> {
 
   String _formatDate(DateTime? date) {
     if (date == null) return '—';
-    return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+    return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 
 
@@ -172,7 +178,29 @@ class _CardManagmentSectionState extends State<CardManagmentSection> {
             const SizedBox(height: 8),
             Text('ID колоди: ${widget.deckId}', style: const TextStyle(color: Colors.white38, fontSize: 14)),
             const SizedBox(height: 12),
-            Text('Автор: $userEmail', style: const TextStyle(color: Colors.white70, fontSize: 16)),
+            Row(
+              children: [
+                const Text('Автор: ', style: TextStyle(color: Colors.white70 , fontSize: 16)),
+                Expanded(
+                  child: Text(
+                    userEmail,
+                    style: const TextStyle(color: Colors.white70, fontSize: 16),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: role == 'admin' ? Colors.orange : Colors.blueGrey,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    role,
+                    style: const TextStyle(color: Colors.white, fontSize: 11),
+                  ),
+                ),
+              ],
+            ),
             Text('Статус: ${_formatStatus()}', style: const TextStyle(color: Colors.white70, fontSize: 16)),
             if (widget.collection == 'published_decks') ...[
               Text('Тип публікації: ${publicationMode == 'permanent' ? 'Назавжди' : 'Тимчасова'}',
@@ -184,10 +212,18 @@ class _CardManagmentSectionState extends State<CardManagmentSection> {
                 Text('Коментар: $adminNote',
                     style: const TextStyle(color: Colors.orangeAccent, fontSize: 16)),
             ],
-            if (createdAt != null)
-              Text('Створено: ${_formatDate(createdAt)}',
+            if (widget.collection == 'decks')
+              if ((moderationStatus == 'pending' || moderationStatus == 'rejected') && wasEverPublished && publishedAt != null)
+                Text('Опубліковано раніше: ${_formatDate(publishedAt)}', style: const TextStyle(color: Colors.white70, fontSize: 16)),
+            if (widget.collection == 'decks' && (moderationStatus == 'pending' || moderationStatus == 'rejected') && submittedAt != null)
+              Text('Подано: ${_formatDate(submittedAt)}',
                   style: const TextStyle(color: Colors.white70, fontSize: 16)),
-            if (publishedAt != null)
+            if (widget.collection == 'decks' && moderationStatus == 'rejected' && moderatedAt != null)
+              Text('Перевірено: ${_formatDate(moderatedAt)}', style: const TextStyle(color: Colors.white70, fontSize: 16)),
+
+
+
+            if (publishedAt != null && widget.collection == 'published_decks')
               Text('Опубліковано: ${_formatDate(publishedAt)}',
                   style: const TextStyle(color: Colors.white70, fontSize: 16)),
             const SizedBox(height: 20),
@@ -235,7 +271,6 @@ class _CardManagmentSectionState extends State<CardManagmentSection> {
             ),
             const SizedBox(height: 50),
             _buildActionButtons(),
-
           ],
         ),
       ),

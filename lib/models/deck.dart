@@ -17,6 +17,8 @@ class Deck {
   final DateTime? publishedAt;
   final String? copiedFrom;
   final DateTime? copiedAt;
+  final DateTime? submittedAt;
+
 
   Deck({
     required this.id,
@@ -35,6 +37,7 @@ class Deck {
     this.publishedAt,
     this.copiedFrom,
     this.copiedAt,
+    this.submittedAt,
   });
 
   factory Deck.fromMap(String id, Map<String, dynamic> data) {
@@ -67,6 +70,9 @@ class Deck {
       copiedAt: data['copiedAt'] != null
           ? (data['copiedAt'] as Timestamp).toDate()
           : null,
+      submittedAt: data['submittedAt'] != null
+          ? (data['submittedAt'] as Timestamp).toDate()
+          : null,
     );
   }
 
@@ -87,6 +93,7 @@ class Deck {
       if (publishedAt != null) 'publishedAt': publishedAt,
       if (copiedFrom != null) 'copiedFrom': copiedFrom,
       if (copiedAt != null) 'copiedAt': copiedAt,
+      if (submittedAt != null) 'submittedAt': submittedAt,
     };
   }
 }

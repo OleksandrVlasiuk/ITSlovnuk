@@ -1,3 +1,4 @@
+//deck_moderation_filters.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -5,17 +6,19 @@ class DeckModerationFilters extends StatefulWidget {
   final String filter;
   final void Function(Map<String, dynamic>) onChanged;
 
-  const DeckModerationFilters({
-    super.key,
+  DeckModerationFilters({
+    Key? key, // <- дозволяємо передати зовнішній key (типу GlobalKey<_DeckModerationFiltersState>)
     required this.filter,
     required this.onChanged,
-  });
+  }) : super(key: key);
 
   @override
-  State<DeckModerationFilters> createState() => _DeckModerationFiltersState();
+  State<DeckModerationFilters> createState() => DeckModerationFiltersState();
 }
 
-class _DeckModerationFiltersState extends State<DeckModerationFilters> {
+
+
+class DeckModerationFiltersState extends State<DeckModerationFilters> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   String? _thirdFilter;
@@ -24,6 +27,8 @@ class _DeckModerationFiltersState extends State<DeckModerationFilters> {
   DateTime? _endDate;
   DateTime? _startPublishedDate;
   DateTime? _endPublishedDate;
+  bool _isExpanded = false;
+  String? _roleFilter;
 
   @override
   void initState() {
@@ -36,13 +41,17 @@ class _DeckModerationFiltersState extends State<DeckModerationFilters> {
     widget.onChanged({
       'email': _emailController.text.trim().toLowerCase(),
       'title': _titleController.text.trim().toLowerCase(),
-      'third': _thirdFilter,
+      'third': _thirdFilter?.isEmpty == true ? null : _thirdFilter,
       'sortDate': _sortDateFilter,
-      'startDate': widget.filter == 'rejected' ? _startDate : _startPublishedDate,
-      'endDate': widget.filter == 'rejected' ? _endDate : _endPublishedDate,
+      'startDate': widget.filter == 'rejected' || widget.filter == 'pending'
+          ? _startDate
+          : _startPublishedDate,
+      'endDate': widget.filter == 'rejected' || widget.filter == 'pending'
+          ? _endDate
+          : _endPublishedDate,
+      'role': widget.filter == 'allPublic' || widget.filter == 'hidden' ? _roleFilter : null,
     });
   }
-
 
   void _clearFilters() {
     _emailController.clear();
@@ -54,10 +63,10 @@ class _DeckModerationFiltersState extends State<DeckModerationFilters> {
       _endDate = null;
       _startPublishedDate = null;
       _endPublishedDate = null;
+      _roleFilter = null;
     });
     _onChanged();
   }
-
 
   InputDecoration _dropdownDecoration() {
     return InputDecoration(
@@ -137,18 +146,41 @@ class _DeckModerationFiltersState extends State<DeckModerationFilters> {
           ),
         ),
         const SizedBox(width: 6),
-        Expanded(
-          flex: 3,
-          child: _buildThirdFilterCompact(),
-        ),
+        Expanded(flex: 3, child: _buildThirdFilterCompact()),
         const SizedBox(width: 4),
-        IconButton(
-          onPressed: _clearFilters,
-          icon: const Icon(Icons.clear, size: 18, color: Colors.white60),
-          tooltip: 'Очистити фільтри',
-          padding: EdgeInsets.zero,
-          constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-        ),
+        if (_isExpanded)
+          IconButton(
+            onPressed: _clearFilters,
+            icon: const Icon(Icons.clear, size: 18, color: Colors.white60),
+            tooltip: 'Очистити фільтри',
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+          ),
+        if (widget.filter == 'allPublic' || widget.filter == 'hidden')
+          const SizedBox(width: 6),
+        if (widget.filter == 'allPublic' || widget.filter == 'hidden')
+          Expanded(
+            flex: 2,
+            child: DropdownButtonFormField<String>(
+              value: _roleFilter,
+              hint: const Text('Роль', style: TextStyle(color: Colors.white70, fontSize: 12)),
+              dropdownColor: Colors.grey[900],
+              iconEnabledColor: Colors.white,
+              style: const TextStyle(color: Colors.white, fontSize: 12),
+              isExpanded: true,
+              decoration: _dropdownDecoration(),
+              items: const [
+                DropdownMenuItem(value: null, child: Text('Усі')),
+                DropdownMenuItem(value: 'admin', child: Text('Адмін')),
+                DropdownMenuItem(value: 'user', child: Text('Користувач')),
+              ],
+              onChanged: (val) {
+                setState(() => _roleFilter = val);
+                _onChanged();
+              },
+            ),
+          ),
+
       ],
     );
   }
@@ -163,6 +195,7 @@ class _DeckModerationFiltersState extends State<DeckModerationFilters> {
 
     switch (widget.filter) {
       case 'pending':
+      case 'rejected':
         return DropdownButtonFormField<String>(
           value: _thirdFilter,
           hint: const Text('Тип подачі', style: TextStyle(color: Colors.white70, fontSize: 12)),
@@ -172,31 +205,13 @@ class _DeckModerationFiltersState extends State<DeckModerationFilters> {
           isExpanded: true,
           decoration: _dropdownDecoration(),
           items: buildItems([
+            {'value': '', 'label': 'Усі'},
             {'value': 'Оновлення публікації', 'label': 'Оновлення'},
             {'value': 'Первинна публікація', 'label': 'Публікація'},
             {'value': 'Запит на вічну публікацію', 'label': 'Назавжди'},
           ]),
           onChanged: (val) {
-            setState(() => _thirdFilter = val);
-            _onChanged();
-          },
-        );
-
-      case 'rejected':
-        return DropdownButtonFormField<String>(
-          value: _sortDateFilter,
-          hint: const Text('Сортування дати перевірки', style: TextStyle(color: Colors.white70, fontSize: 12)),
-          dropdownColor: Colors.grey[900],
-          iconEnabledColor: Colors.white,
-          style: const TextStyle(color: Colors.white, fontSize: 12),
-          isExpanded: true,
-          decoration: _dropdownDecoration(),
-          items: const [
-            DropdownMenuItem(value: 'desc', child: Text('Спадання')),
-            DropdownMenuItem(value: 'asc', child: Text('Зростання')),
-          ],
-          onChanged: (val) {
-            setState(() => _sortDateFilter = val);
+            setState(() => _thirdFilter = val == '' ? null : val);
             _onChanged();
           },
         );
@@ -212,11 +227,12 @@ class _DeckModerationFiltersState extends State<DeckModerationFilters> {
           isExpanded: true,
           decoration: _dropdownDecoration(),
           items: buildItems([
+            {'value': '', 'label': 'Усі'},
             {'value': 'temporary', 'label': 'Тимчасова'},
             {'value': 'permanent', 'label': 'Вічна'},
           ]),
           onChanged: (val) {
-            setState(() => _thirdFilter = val);
+            setState(() => _thirdFilter = val == '' ? null : val);
             _onChanged();
           },
         );
@@ -227,7 +243,7 @@ class _DeckModerationFiltersState extends State<DeckModerationFilters> {
   }
 
   Widget _buildSecondRow() {
-    if (widget.filter == 'rejected') {
+    if (widget.filter == 'rejected' || widget.filter == 'pending') {
       return Row(
         children: [
           Expanded(child: _buildDateSelector('Дата від', _startDate, (val) => setState(() => _startDate = val))),
@@ -288,8 +304,6 @@ class _DeckModerationFiltersState extends State<DeckModerationFilters> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -303,4 +317,21 @@ class _DeckModerationFiltersState extends State<DeckModerationFilters> {
       ),
     );
   }
+
+  void clearAll() {
+    _emailController.clear();
+    _titleController.clear();
+    setState(() {
+      _thirdFilter = null;
+      _sortDateFilter = null;
+      _startDate = null;
+      _endDate = null;
+      _startPublishedDate = null;
+      _endPublishedDate = null;
+      _roleFilter = null;
+    });
+    _onChanged();
+  }
+
+
 }

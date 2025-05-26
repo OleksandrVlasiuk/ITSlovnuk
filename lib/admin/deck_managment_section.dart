@@ -8,6 +8,17 @@ import 'package:intl/intl.dart';
 
 import 'deck_moderation_filters.dart';
 
+bool isSameOrAfter(DateTime a, DateTime b) =>
+    a.year > b.year ||
+        (a.year == b.year && a.month > b.month) ||
+        (a.year == b.year && a.month == b.month && a.day >= b.day);
+
+bool isSameOrBefore(DateTime a, DateTime b) =>
+    a.year < b.year ||
+        (a.year == b.year && a.month < b.month) ||
+        (a.year == b.year && a.month == b.month && a.day <= b.day);
+
+
 class DeckManagmentSection extends StatelessWidget {
   const DeckManagmentSection({super.key});
 
@@ -59,6 +70,8 @@ class DeckModerationList extends StatefulWidget {
 
 class _DeckModerationListState extends State<DeckModerationList> {
   Map<String, dynamic> _filters = {};
+  bool _filtersExpanded = false;
+  final GlobalKey<DeckModerationFiltersState> _filtersKey = GlobalKey();
 
   Stream<QuerySnapshot> _deckStream() {
     final firestore = FirebaseFirestore.instance;
@@ -130,37 +143,70 @@ class _DeckModerationListState extends State<DeckModerationList> {
     final emailQuery = _filters['email']?.toString().toLowerCase() ?? '';
     final third = _filters['third'];
     final sortDate = _filters['sortDate'];
-    final DateTime? startDate = _filters['startDate'];
-    final DateTime? endDate = _filters['endDate'];
+    final roleFilter = _filters['role']?.toString().toLowerCase();
+
+
+    final DateTime? startSubmitted = widget.filter == 'pending' ? _filters['startDate'] : null;
+    final DateTime? endSubmitted = widget.filter == 'pending' ? _filters['endDate'] : null;
+
+    final DateTime? startModerated = widget.filter == 'rejected' ? _filters['startDate'] : null;
+    final DateTime? endModerated = widget.filter == 'rejected' ? _filters['endDate'] : null;
+
+    final DateTime? startPublished = (widget.filter == 'allPublic' || widget.filter == 'hidden') ? _filters['startDate'] : null;
+    final DateTime? endPublished = (widget.filter == 'allPublic' || widget.filter == 'hidden') ? _filters['endDate'] : null;
 
     List<QueryDocumentSnapshot> filtered = decks.where((deck) {
       final data = deck.data() as Map<String, dynamic>;
       final title = (data['title'] ?? '').toString().toLowerCase();
       final type = _submissionLabel(data);
+      final pubMode = data['publicationMode'] ?? 'temporary';
 
       final matchesTitle = titleQuery.isEmpty || title.contains(titleQuery);
-
       bool matchesThird = true;
-      if (widget.filter == 'pending') {
+
+      if (widget.filter == 'pending' || widget.filter == 'rejected') {
         matchesThird = third == null || third == type;
       } else if (widget.filter == 'allPublic' || widget.filter == 'hidden') {
-        final pubMode = data['publicationMode'] ?? 'temporary';
         matchesThird = third == null || third == pubMode;
       }
 
-      // Email фільтрується в FutureBuilder, тому завжди true
+
       return matchesTitle && matchesThird;
     }).toList();
 
-    // 🔽 Сортування та фільтрація для rejected
+
+    if (widget.filter == 'pending') {
+      if (startSubmitted != null || endSubmitted != null) {
+        filtered = filtered.where((deck) {
+          final submitted = (deck.data() as Map<String, dynamic>)['submittedAt'];
+          if (submitted == null) return false;
+          final time = (submitted as Timestamp).toDate();
+          final afterStart = startSubmitted == null || isSameOrAfter(time, startSubmitted);
+          final beforeEnd = endSubmitted == null || isSameOrBefore(time, endSubmitted);
+          return afterStart && beforeEnd;
+        }).toList();
+      }
+
+      if (sortDate != null) {
+        filtered.sort((a, b) {
+          final aTime = (a.data() as Map<String, dynamic>)['submittedAt']?.toDate();
+          final bTime = (b.data() as Map<String, dynamic>)['submittedAt']?.toDate();
+          if (aTime == null || bTime == null) return 0;
+          return sortDate == 'asc' ? aTime.compareTo(bTime) : bTime.compareTo(aTime);
+        });
+      }
+    }
+
+
+
     if (widget.filter == 'rejected') {
-      if (startDate != null || endDate != null) {
+      if (startModerated != null || endModerated != null) {
         filtered = filtered.where((deck) {
           final moderated = (deck.data() as Map<String, dynamic>)['moderatedAt'];
           if (moderated == null) return false;
           final time = (moderated as Timestamp).toDate();
-          final afterStart = startDate == null || time.isAfter(startDate.subtract(const Duration(days: 1)));
-          final beforeEnd = endDate == null || time.isBefore(endDate.add(const Duration(days: 1)));
+          final afterStart = startModerated == null || isSameOrAfter(time, startModerated);
+          final beforeEnd = endModerated == null || isSameOrBefore(time, endModerated);
           return afterStart && beforeEnd;
         }).toList();
       }
@@ -175,15 +221,14 @@ class _DeckModerationListState extends State<DeckModerationList> {
       }
     }
 
-    // 🔽 Сортування для публічних і прихованих
     if (widget.filter == 'allPublic' || widget.filter == 'hidden') {
-      if (startDate != null || endDate != null) {
+      if (startPublished != null || endPublished != null) {
         filtered = filtered.where((deck) {
           final published = (deck.data() as Map<String, dynamic>)['publishedAt'];
           if (published == null) return false;
           final time = (published as Timestamp).toDate();
-          final afterStart = startDate == null || time.isAfter(startDate.subtract(const Duration(days: 1)));
-          final beforeEnd = endDate == null || time.isBefore(endDate.add(const Duration(days: 1)));
+          final afterStart = startPublished == null || isSameOrAfter(time, startPublished);
+          final beforeEnd = endPublished == null || isSameOrBefore(time, endPublished);
           return afterStart && beforeEnd;
         }).toList();
       }
@@ -198,9 +243,10 @@ class _DeckModerationListState extends State<DeckModerationList> {
       }
     }
 
-
     return filtered;
   }
+
+
 
 
 
@@ -209,10 +255,70 @@ class _DeckModerationListState extends State<DeckModerationList> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-      DeckModerationFilters(
-      filter: widget.filter,
-      onChanged: (filters) => setState(() => _filters = filters),
-    ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(left: 20),
+                  child: Text(
+                    'Фільтри',
+                    style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: () => setState(() => _filtersExpanded = !_filtersExpanded),
+                  icon: Icon(
+                    _filtersExpanded ? Icons.expand_less : Icons.expand_more,
+                    color: Colors.white,
+                  ),
+                  label: Text(
+                    _filtersExpanded ? 'Згорнути' : 'Розгорнути',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+
+            AnimatedCrossFade(
+              firstChild: const SizedBox.shrink(),
+              secondChild: Column(
+                children: [
+                  DeckModerationFilters(
+                    key: _filtersKey, // ⬅️ підключаємо глобальний ключ
+                    filter: widget.filter,
+                    onChanged: (filters) => setState(() => _filters = filters),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton.icon(
+                      onPressed: () {
+                        _filtersKey.currentState?.clearAll(); // ⬅️ очищення ззовні
+                      },
+                      icon: const Icon(Icons.clear, size: 18, color: Colors.white60),
+                      label: const Text(
+                        'Очистити фільтри',
+                        style: TextStyle(color: Colors.white70, fontSize: 12),
+                      ),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              crossFadeState: _filtersExpanded
+                  ? CrossFadeState.showSecond
+                  : CrossFadeState.showFirst,
+              duration: const Duration(milliseconds: 200),
+            ),
+          ],
+        ),
+
+
       Expanded(
         child:
         StreamBuilder<QuerySnapshot>(
@@ -246,31 +352,47 @@ class _DeckModerationListState extends State<DeckModerationList> {
             final deck = decks[index];
             final data = deck.data() as Map<String, dynamic>;
 
-            final title = data['title'] ?? 'Без назви';
+            final baseTitle = data['title'] ?? 'Без назви';
+            final addedCount = data['addedCount'] ?? 0;
+
+            final isPending = widget.filter == 'pending';
+            final isRejected = widget.filter == 'rejected';
+            final isPublicDeck = widget.filter == 'allPublic' || widget.filter == 'hidden';
+
+            final title = baseTitle;
+
             final userId = data['userId'] ?? '';
             final moderatedAt = data.containsKey('moderatedAt') ? _formatDate(
                 data['moderatedAt']) : '';
             final publishedAt = data.containsKey('publishedAt') ? _formatDate(
                 data['publishedAt']) : '';
             final submissionType = _submissionLabel(data);
+            final submittedAt = data.containsKey('submittedAt') ? _formatDate(data['submittedAt']) : '';
 
-            final isPending = widget.filter == 'pending';
-            final isRejected = widget.filter == 'rejected';
-            final isPublicDeck = widget.filter == 'allPublic' || widget.filter == 'hidden';
+
 
             return FutureBuilder<DocumentSnapshot>(
               future: FirebaseFirestore.instance.collection('users').doc(userId).get(),
               builder: (context, userSnapshot) {
                 String userEmail = 'Невідомо';
+                String role = 'user'; // за замовчуванням
+
                 if (userSnapshot.hasData && userSnapshot.data!.exists) {
                   final userData = userSnapshot.data!.data() as Map<String, dynamic>;
                   userEmail = (userData['email'] ?? '').toString().toLowerCase();
+                  role = (userData['role'] ?? 'user').toString().toLowerCase();
 
                   final emailFilter = _filters['email']?.toString().toLowerCase() ?? '';
                   if (emailFilter.isNotEmpty && !userEmail.contains(emailFilter)) {
-                    return const SizedBox.shrink(); // ❌ не відображати цю колоду
+                    return const SizedBox.shrink();
+                  }
+
+                  final roleFilter = _filters['role']?.toString().toLowerCase();
+                  if (roleFilter != null && role != roleFilter) {
+                    return const SizedBox.shrink();
                   }
                 }
+
 
                 final isDraft = widget.filter == 'pending' || widget.filter == 'rejected';
                 final realDeckId = isDraft ? deck.id : (data['deckId'] ?? deck.id);
@@ -307,18 +429,39 @@ class _DeckModerationListState extends State<DeckModerationList> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Wrap(
-                                  crossAxisAlignment: WrapCrossAlignment.center,
-                                  spacing: 6,
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Text(
-                                      title,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
+                                    // Назва + дата подачі (разом, але з різним стилем)
+                                    Expanded(
+                                      child: RichText(
+                                        text: TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: title,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            if (isPublicDeck)
+                                              TextSpan(
+                                                text: '  (додано: $addedCount)',
+                                                style: const TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.normal,
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
+
+                                    // Переглянути зміни (праворуч)
                                     if (isPending && submissionType == 'Оновлення публікації')
                                       FutureBuilder<Map<String, dynamic>>(
                                         future: DeckService().getDeckChanges(deck.id),
@@ -350,15 +493,44 @@ class _DeckModerationListState extends State<DeckModerationList> {
                                   ],
                                 ),
 
+
+
                                 const SizedBox(height: 8),
-                                Text('Автор: $userEmail', style: const TextStyle(color: Colors.grey)),
+                                Row(
+                                  children: [
+                                    const Text('Автор: ', style: TextStyle(color: Colors.grey)),
+                                    // Email (обрізатиметься, якщо довгий)
+                                    Expanded(
+                                      child: Text(
+                                        userEmail,
+                                        style: const TextStyle(color: Colors.grey),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    // Роль (кольоровий бейджик)
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: role == 'admin' ? Colors.orange : Colors.blueGrey,
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Text(
+                                        role,
+                                        style: const TextStyle(color: Colors.white, fontSize: 11),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
                                 if (isPending || isRejected) ...[
                                   Text('Id: ${deck.id}', style: const TextStyle(color: Colors.grey)),
                                   Text('Тип подачі: $submissionType', style: const TextStyle(color: Colors.orangeAccent)),
-                                  if (moderatedAt.isNotEmpty)
+                                  if (moderatedAt.isNotEmpty && isRejected)
                                     Text('Перевірено: $moderatedAt', style: const TextStyle(color: Colors.grey)),
-                                  if (publishedAt.isNotEmpty)
-                                    Text('Опубліковано: $publishedAt', style: const TextStyle(color: Colors.grey)),
+                                  if (submittedAt.isNotEmpty && isPending)
+                                    Text('Подано: $submittedAt', style: const TextStyle(color: Colors.grey)),
+
                                 ],
                                 if (isPublicDeck) ...[
                                   Text('Id: ${deck.id}', style: const TextStyle(color: Colors.grey)),
