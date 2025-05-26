@@ -1,4 +1,3 @@
-//deck.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Deck {
@@ -14,8 +13,10 @@ class Deck {
   final DateTime createdAt;
   final int cardCount;
   final DateTime? archivedAt;
-  final DateTime? moderatedAt;   // NEW
-  final DateTime? publishedAt;   // NEW
+  final DateTime? moderatedAt;
+  final DateTime? publishedAt;
+  final String? copiedFrom;
+  final DateTime? copiedAt;
 
   Deck({
     required this.id,
@@ -32,6 +33,8 @@ class Deck {
     this.archivedAt,
     this.moderatedAt,
     this.publishedAt,
+    this.copiedFrom,
+    this.copiedAt,
   });
 
   factory Deck.fromMap(String id, Map<String, dynamic> data) {
@@ -60,6 +63,10 @@ class Deck {
       publishedAt: data['publishedAt'] != null
           ? (data['publishedAt'] as Timestamp).toDate()
           : null,
+      copiedFrom: data['copiedFrom'],
+      copiedAt: data['copiedAt'] != null
+          ? (data['copiedAt'] as Timestamp).toDate()
+          : null,
     );
   }
 
@@ -78,6 +85,8 @@ class Deck {
       'archivedAt': archivedAt,
       if (moderatedAt != null) 'moderatedAt': moderatedAt,
       if (publishedAt != null) 'publishedAt': publishedAt,
+      if (copiedFrom != null) 'copiedFrom': copiedFrom,
+      if (copiedAt != null) 'copiedAt': copiedAt,
     };
   }
 }

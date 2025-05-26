@@ -7,6 +7,7 @@ class PublishedDeck {
   final String userId;
   final String title;
   final int sessionCardCount;
+  final int cardCount;
   final String publicationMode; // 'temporary' або 'permanent'
   final DateTime publishedAt;
   final bool isActive;
@@ -19,6 +20,7 @@ class PublishedDeck {
     required this.userId,
     required this.title,
     required this.sessionCardCount,
+    required this.cardCount,
     required this.publicationMode,
     required this.publishedAt,
     required this.isActive,
@@ -35,6 +37,7 @@ class PublishedDeck {
       sessionCardCount: data['sessionCardCount'] ?? 5,
       publicationMode: data['publicationMode'] ?? 'temporary',
       publishedAt: (data['publishedAt'] as Timestamp).toDate(),
+      cardCount: data['cardCount'] ?? 0,
       isActive: data['isActive'] ?? true,
       moderatedBy: data['moderatedBy'],
       adminNote: data['adminNote'],
@@ -49,6 +52,7 @@ class PublishedDeck {
       'sessionCardCount': sessionCardCount,
       'publicationMode': publicationMode,
       'publishedAt': publishedAt,
+      'cardCount': cardCount,
       'isActive': isActive,
       if (moderatedBy != null) 'moderatedBy': moderatedBy,
       if (adminNote != null) 'adminNote': adminNote,

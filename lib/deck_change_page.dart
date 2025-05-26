@@ -12,9 +12,12 @@ class DeckChangesPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFF1C1C1C),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF2C2C2C),
-        title: const Text("Зміни в колоді"),
+        backgroundColor: const Color(0xFF2B2B2B),
+        title: const Text('ITСловник', style: TextStyle(color: Colors.white)),
+        centerTitle: true,
+        leading: const BackButton(color: Colors.white),
       ),
+
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: ListView(

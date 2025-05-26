@@ -34,45 +34,55 @@ class DeckService {
   }
 
 
-  /// Схвалити колоду (з урахуванням дублювання)
   Future<void> approveDeck(String deckId) async {
-    final deckRef = FirebaseFirestore.instance.collection('decks').doc(deckId);
+    final firestore = FirebaseFirestore.instance;
+    final deckRef = firestore.collection('decks').doc(deckId);
     final deckSnap = await deckRef.get();
+
     if (!deckSnap.exists) return;
 
     final deckData = deckSnap.data()!;
     final now = DateTime.now();
 
-    // оновлюємо статус у deck
+    // Отримуємо картки ЗАВЧАСНО
+    final cardsSnapshot = await deckRef.collection('cards').get();
+
+    // Оновлюємо статус у оригінальній колекції
     await deckRef.update({
       'moderationStatus': 'approved',
       'moderatedAt': now,
       'publishedAt': now,
-      'isPublic': true, // тільки ТУТ стає публічною
+      'isPublic': true,
     });
 
-    // оновлюємо / створюємо published_deck
-    final publishedDeckRef =
-    FirebaseFirestore.instance.collection('published_decks').doc(deckId);
-
-    final existingSnap = await publishedDeckRef.get();
+    // Готуємо дані для published_decks
+    final publishedRef = firestore.collection('published_decks').doc(deckId);
+    final publishedSnap = await publishedRef.get();
 
     final publishedData = {
       'deckId': deckId,
       'userId': deckData['userId'],
       'title': deckData['title'],
-      'sessionCardCount': deckData['sessionCardCount'],
+      'sessionCardCount': cardsSnapshot.docs.length, // ✅
+      'cardCount': cardsSnapshot.docs.length,        // ✅
       'publicationMode': 'temporary',
       'publishedAt': now,
       'isActive': true,
     };
 
-    if (existingSnap.exists) {
-      await publishedDeckRef.update(publishedData);
+    if (publishedSnap.exists) {
+      await publishedRef.update(publishedData);
     } else {
-      await publishedDeckRef.set(publishedData);
+      await publishedRef.set(publishedData);
+    }
+
+    // Копіюємо картки
+    for (final doc in cardsSnapshot.docs) {
+      await publishedRef.collection('cards').doc(doc.id).set(doc.data());
     }
   }
+
+
 
 
   Future<void> publishPermanently(String deckId) async {
@@ -274,4 +284,45 @@ class DeckService {
         a['definitionEng'] == b['definitionEng'] &&
         a['definitionUkr'] == b['definitionUkr'];
   }
+
+  Future<void> addPublicDeckToUser(String publishedDeckId, String userId) async {
+    final firestore = FirebaseFirestore.instance;
+
+    final pubSnap = await firestore.collection('published_decks').doc(publishedDeckId).get();
+    if (!pubSnap.exists) throw Exception('Колода не знайдена');
+
+    final pubData = pubSnap.data()!;
+    final newDeckRef = await firestore.collection('decks').add({
+      'title': pubData['title'],
+      'userId': userId,
+      'sessionCardCount': pubData['sessionCardCount'] ?? 0,
+      'createdAt': FieldValue.serverTimestamp(),
+      'isArchived': false,
+      'isPublic': false,
+      'copiedFrom': publishedDeckId,
+      'copiedAt': FieldValue.serverTimestamp(),
+      'cardCount': 0, // приватна не використовується для перегляду
+    });
+
+    await newDeckRef.update({'id': newDeckRef.id});
+
+    final cardsSnap = await firestore
+        .collection('published_decks')
+        .doc(publishedDeckId)
+        .collection('cards')
+        .get();
+
+    for (final doc in cardsSnap.docs) {
+      await newDeckRef.collection('cards').doc(doc.id).set(doc.data());
+    }
+
+    // ✅ Оновлюємо лише в опублікованій колоді
+    await firestore.collection('published_decks').doc(publishedDeckId).update({
+      'addedCount': FieldValue.increment(1),
+      'cardCount': cardsSnap.docs.length
+    });
+  }
+
+
+
 }
