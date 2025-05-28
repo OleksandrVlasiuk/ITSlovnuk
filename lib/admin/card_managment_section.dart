@@ -346,8 +346,9 @@ class _CardManagmentSectionState extends State<CardManagmentSection> {
                         ],
                       ),
                     );
-                    if (confirmed == true && controller.text.trim().isNotEmpty) {
-                      await DeckService().rejectDeck(widget.deckId, controller.text.trim());
+                    if (confirmed == true) {
+                      final reason = controller.text.trim().isEmpty ? 'Відсутня' : controller.text.trim();
+                      await DeckService().rejectDeck(widget.deckId, reason);
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("Колоду відхилено")),
                       );

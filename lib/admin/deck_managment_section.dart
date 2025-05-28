@@ -111,10 +111,17 @@ class _DeckModerationListState extends State<DeckModerationList> {
   String _submissionLabel(Map<String, dynamic> data) {
     final isPublic = data['isPublic'] ?? false;
     final publicationMode = data['publicationMode'] ?? 'temporary';
+    final moderationStatus = data['moderationStatus'] ?? '';
+
+    if (publicationMode == 'permanent' && moderationStatus != 'approved') {
+      return 'Вічна публікація';
+    }
+
+
     if (!isPublic) return 'Первинна публікація';
-    if (publicationMode == 'permanent') return 'Запит на вічну публікацію';
     return 'Оновлення публікації';
   }
+
 
   Future<bool> _confirmAction(BuildContext context, String message) async {
     return await showDialog<bool>(
@@ -140,11 +147,8 @@ class _DeckModerationListState extends State<DeckModerationList> {
 
   List<QueryDocumentSnapshot> _applyFilters(List<QueryDocumentSnapshot> decks) {
     final titleQuery = _filters['title']?.toString().toLowerCase() ?? '';
-    final emailQuery = _filters['email']?.toString().toLowerCase() ?? '';
     final third = _filters['third'];
     final sortDate = _filters['sortDate'];
-    final roleFilter = _filters['role']?.toString().toLowerCase();
-
 
     final DateTime? startSubmitted = widget.filter == 'pending' ? _filters['startDate'] : null;
     final DateTime? endSubmitted = widget.filter == 'pending' ? _filters['endDate'] : null;
@@ -364,8 +368,6 @@ class _DeckModerationListState extends State<DeckModerationList> {
             final userId = data['userId'] ?? '';
             final moderatedAt = data.containsKey('moderatedAt') ? _formatDate(
                 data['moderatedAt']) : '';
-            final publishedAt = data.containsKey('publishedAt') ? _formatDate(
-                data['publishedAt']) : '';
             final submissionType = _submissionLabel(data);
             final submittedAt = data.containsKey('submittedAt') ? _formatDate(data['submittedAt']) : '';
 
@@ -392,10 +394,6 @@ class _DeckModerationListState extends State<DeckModerationList> {
                     return const SizedBox.shrink();
                   }
                 }
-
-
-                final isDraft = widget.filter == 'pending' || widget.filter == 'rejected';
-                final realDeckId = isDraft ? deck.id : (data['deckId'] ?? deck.id);
 
                 return InkWell(
                   borderRadius: BorderRadius.circular(24),
@@ -590,7 +588,7 @@ class _DeckModerationListState extends State<DeckModerationList> {
                                       ),
                                     );
                                     if (confirmed == true) {
-                                      final reason = controller.text.trim();
+                                      final reason = controller.text.trim().isEmpty ? 'Відсутня' : controller.text.trim();
                                       await DeckService().rejectDeck(deck.id, reason);
                                     }
                                   },

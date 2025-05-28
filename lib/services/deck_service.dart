@@ -11,16 +11,17 @@ class DeckService {
     await docRef.update({'id': docRef.id});
   }
 
-  /// Подати нову колоду на модерацію
-  Future<void> submitForModeration(String deckId) async {
+  Future<void> submitForModeration(String deckId, {String submissionType = 'initial'}) async {
     await FirebaseFirestore.instance.collection('decks').doc(deckId).update({
       'moderationStatus': 'pending',
       'moderationNote': null,
       'moderatedAt': null,
       'publishedAt': null,
       'submittedAt': FieldValue.serverTimestamp(),
+      'lastSubmissionType': submissionType,
     });
   }
+
 
 
   /// Подати оновлення до вже існуючої публічної колоди
@@ -30,6 +31,7 @@ class DeckService {
       'moderationNote': null,
       'moderatedAt': null,
       'submittedAt': FieldValue.serverTimestamp(),
+      'lastSubmissionType': 'update',
     });
   }
 
@@ -65,7 +67,7 @@ class DeckService {
       'title': deckData['title'],
       'sessionCardCount': cardsSnapshot.docs.length, // ✅
       'cardCount': cardsSnapshot.docs.length,        // ✅
-      'publicationMode': 'temporary',
+      'publicationMode': deckData['publicationMode'] ?? 'temporary',
       'publishedAt': now,
       'isActive': true,
     };
@@ -85,16 +87,55 @@ class DeckService {
 
 
 
-  Future<void> publishPermanently(String deckId) async {
-    final snap = await FirebaseFirestore.instance
-        .collection('published_decks')
-        .doc(deckId)
-        .get();
+  Future<void> publishPermanently(String deckId, {required bool isAdmin}) async {
+    final firestore = FirebaseFirestore.instance;
+    final deckRef = firestore.collection('decks').doc(deckId);
 
-    if (snap.exists && snap.data()?['isActive'] == true) {
-      await snap.reference.update({'publicationMode': 'permanent'});
+    if (isAdmin) {
+      // 🔓 Адмін — одразу публікує назавжди
+      final now = DateTime.now();
+      final deckSnap = await deckRef.get();
+      if (!deckSnap.exists) return;
+
+      final deckData = deckSnap.data()!;
+      final cardsSnapshot = await deckRef.collection('cards').get();
+
+      await deckRef.update({
+        'moderationStatus': 'approved',
+        'moderatedAt': now,
+        'publishedAt': now,
+        'isPublic': true,
+      });
+
+      final publishedRef = firestore.collection('published_decks').doc(deckId);
+      await publishedRef.set({
+        'deckId': deckId,
+        'userId': deckData['userId'],
+        'title': deckData['title'],
+        'sessionCardCount': deckData['sessionCardCount'] ?? 5,
+        'cardCount': cardsSnapshot.docs.length,
+        'publicationMode': 'permanent',
+        'publishedAt': now,
+        'isActive': true,
+      });
+
+      for (final doc in cardsSnapshot.docs) {
+        await publishedRef.collection('cards').doc(doc.id).set(doc.data());
+      }
+    } else {
+      // 👤 Звичайний користувач — подає на модерацію для вічної публікації
+      await deckRef.update({
+        'moderationStatus': 'pending',
+        'publicationMode': 'permanent',
+        'moderationNote': null,
+        'moderatedAt': null,
+        'publishedAt': null,
+        'submittedAt': FieldValue.serverTimestamp(),
+        'lastSubmissionType': 'permanent',
+      });
     }
   }
+
 
 
   /// Відхилити колоду з причиною
@@ -103,7 +144,6 @@ class DeckService {
       'moderationStatus': 'rejected',
       'moderationNote': reason,
       'moderatedAt': DateTime.now(),
-      // isPublic не змінюється (може бути ще не публічною)
     });
   }
 
@@ -323,6 +363,27 @@ class DeckService {
     });
   }
 
+  /// Скинути статус rejected: повернути approved або null в залежності від того,
+  /// чи вже є опублікована версія цієї колоди
+  Future<void> clearRejectionStatusSmart(String deckId) async {
+    final firestore = FirebaseFirestore.instance;
+
+    final publishedSnap = await firestore
+        .collection('published_decks')
+        .doc(deckId)
+        .get();
+
+    final hasPublishedVersion = publishedSnap.exists &&
+        (publishedSnap.data()?['isActive'] == true);
+
+    final updateData = {
+      'moderationStatus': hasPublishedVersion ? 'approved' : null,
+      'moderationNote': null,
+      'moderatedAt': null,
+    };
+
+    await firestore.collection('decks').doc(deckId).update(updateData);
+  }
 
 
 }
