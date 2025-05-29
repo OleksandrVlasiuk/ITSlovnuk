@@ -1,5 +1,6 @@
 //admin_panel.dart
 import 'package:flutter/material.dart';
+import 'package:it_english_app_clean/admin/user_statistics_page.dart';
 import 'deck_managment_section.dart';
 import 'user_managment_section.dart';
 
@@ -54,12 +55,7 @@ class AdminPanelPage extends StatelessWidget {
                   children: [
                     DeckManagmentSection(),
                     UserManagmentSection(),
-                    Center(
-                      child: Text(
-                        'Сторінка статистики в розробці',
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                    ),
+                    AdminStatisticsPage(),
                   ],
                 ),
               ),

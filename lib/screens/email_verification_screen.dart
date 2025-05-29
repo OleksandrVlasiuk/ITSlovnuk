@@ -1,3 +1,4 @@
+//email_verification_screen.dart
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -7,11 +8,13 @@ import '../services/auth_service.dart';
 class EmailVerificationScreen extends StatefulWidget {
   final String email;
   final String source; // 'register' або 'login'
+  final String nickname;
 
   const EmailVerificationScreen({
     super.key,
     required this.email,
     this.source = 'register',
+    required this.nickname,
   });
 
   @override
@@ -62,7 +65,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       });
 
       if (_isVerified && mounted) {
-        await AuthService().createUserDocument(refreshedUser!);
+        await AuthService().createUserDocument(refreshedUser!, widget.nickname);
         Navigator.pushReplacementNamed(context, '/');
       } else if (showMessageIfNotVerified) {
         _showError('Пошта ще не підтверджена. Перевірте свій email.');

@@ -104,6 +104,10 @@ class _LoginScreenState extends State<LoginScreen> {
         case 'user-disabled':
           _showError('Цей акаунт вимкнено.');
           break;
+        case 'blocked-user':
+          _showError(e.message ?? 'Ваш акаунт заблоковано.');
+          break;
+
         default:
           _showError('Помилка входу: ${e.message}');
           break;

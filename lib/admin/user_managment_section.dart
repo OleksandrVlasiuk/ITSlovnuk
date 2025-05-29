@@ -2,6 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../services/auth_service.dart';
 import 'user_moderation_filters.dart';
 
 class UserManagmentSection extends StatefulWidget {
@@ -31,6 +32,7 @@ class _UserManagmentSectionState extends State<UserManagmentSection> {
     final date = timestamp.toDate();
     return DateFormat('dd.MM.yyyy HH:mm').format(date);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -86,23 +88,34 @@ class _UserManagmentSectionState extends State<UserManagmentSection> {
 
                 // Пошук і фільтрація
                 final emailQuery = _filters['email']?.toString().toLowerCase() ?? '';
+                final nicknameQuery = _filters['nickname']?.toString().toLowerCase() ?? '';
                 final roleFilter = _filters['role'];
                 final DateTime? startDate = _filters['startDate'];
                 final DateTime? endDate = _filters['endDate'];
                 final sortDate = _filters['sortDate'];
+                final statusFilter = _filters['status']?.toString(); // ← safely toString
+
 
                 users = users.where((doc) {
                   final data = doc.data() as Map<String, dynamic>;
                   final email = (data['email'] ?? '').toString().toLowerCase();
+                  final nickname = (data['nickname'] ?? '').toString().toLowerCase();
                   final role = data['role'];
                   final createdAt = (data['createdAt'] as Timestamp?)?.toDate();
 
+                  final isBlocked = data['isBlocked'] == true;
+
                   final matchesEmail = email.contains(emailQuery);
+                  final matchesNickname = nicknameQuery.isEmpty || nickname.contains(nicknameQuery);
                   final matchesRole = roleFilter == null || role == roleFilter;
                   final matchesStart = startDate == null || (createdAt != null && isSameOrAfter(createdAt, startDate));
                   final matchesEnd = endDate == null || (createdAt != null && isSameOrBefore(createdAt, endDate));
+                  final matchesStatus = statusFilter == null ||
+                      (statusFilter == 'active' && !isBlocked) ||
+                      (statusFilter == 'blocked' && isBlocked);
 
-                  return matchesEmail && matchesRole && matchesStart && matchesEnd;
+                  return matchesEmail && matchesNickname && matchesRole && matchesStart && matchesEnd && matchesStatus;
+
                 }).toList();
 
 
@@ -141,6 +154,10 @@ class _UserManagmentSectionState extends State<UserManagmentSection> {
                     final email = data['email'] ?? '—';
                     final role = data['role'] ?? 'user';
                     final createdAt = _formatDate(data['createdAt'] as Timestamp?);
+                    final isBlocked = data['isBlocked'] == true;
+                    final blockedAt = _formatDate(data['blockedAt'] as Timestamp?);
+                    final blockReason = data['blockReason'] ?? '';
+
 
                     return Card(
                       color: const Color(0xFF2B2B2B),
@@ -148,12 +165,55 @@ class _UserManagmentSectionState extends State<UserManagmentSection> {
                       margin: const EdgeInsets.only(bottom: 12),
                       child: ListTile(
                         onTap: () => _editRoleDialog(user),
-                        title: Text(email, style: const TextStyle(color: Colors.white)),
-                        subtitle: Text('Роль: $role\nСтворено: $createdAt', style: const TextStyle(color: Colors.white70)),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _confirmDeleteUser(user.id),
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              email,
+                              style: const TextStyle(color: Colors.white, fontSize: 16),
+                            ),
+                            if (data['nickname'] != null && data['nickname'].toString().trim().isNotEmpty)
+                              Text(
+                                data['nickname'],
+                                style: const TextStyle(color: Colors.white54, fontSize: 13),
+                              ),
+                          ],
                         ),
+
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Роль: $role', style: const TextStyle(color: Colors.white70)),
+                            Text('Створено: $createdAt', style: const TextStyle(color: Colors.white70)),
+                            if (isBlocked) ...[
+                              Text('Блок: $blockedAt', style: const TextStyle(color: Colors.redAccent)),
+                              Text('Причина: $blockReason', style: const TextStyle(color: Colors.redAccent)),
+                            ],
+                          ],
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (data['isBlocked'] == true)
+                              IconButton(
+                                icon: const Icon(Icons.lock_open, color: Colors.green),
+                                tooltip: 'Розблокувати',
+                                onPressed: () => _confirmUnblockUser(user.id),
+                              )
+                            else
+                              IconButton(
+                                icon: const Icon(Icons.block, color: Colors.orange),
+                                tooltip: 'Заблокувати',
+                                onPressed: () => _confirmBlockUser(user.id),
+                              ),
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              tooltip: 'Видалити',
+                              onPressed: () => _confirmDeleteUser(user.id),
+                            ),
+                          ],
+                        ),
+
                       ),
                     );
                   },
@@ -226,4 +286,62 @@ class _UserManagmentSectionState extends State<UserManagmentSection> {
       ),
     );
   }
+
+  void _confirmBlockUser(String userId) {
+    final controller = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Заблокувати користувача'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(hintText: 'Причина блокування'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Скасувати')),
+          ElevatedButton(
+            onPressed: () async {
+              final reason = controller.text.trim().isEmpty ? 'Без причини' : controller.text.trim();
+              Navigator.pop(context);
+              await AuthService().blockUser(userId, reason);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Користувача заблоковано')),
+                );
+              }
+            },
+            child: const Text('Заблокувати'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmUnblockUser(String userId) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Розблокувати користувача?'),
+        content: const Text('Це поверне доступ до акаунта.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Скасувати')),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await AuthService().unblockUser(userId);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Користувача розблоковано')),
+                );
+              }
+            },
+            child: const Text('Розблокувати'),
+          ),
+        ],
+      ),
+    );
+  }
+
+
 }

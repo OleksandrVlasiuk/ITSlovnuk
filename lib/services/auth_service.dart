@@ -13,18 +13,55 @@ class AuthService {
     return result.user;
   }
 
-  Future<void> createUserDocument(User user) async {
+  Future<void> createUserDocument(User user, String nickname) async {
     await _firestore.collection('users').doc(user.uid).set({
       'email': user.email,
       'createdAt': DateTime.now(),
       'role': 'user',
+      'nickname': nickname,
+      'isBlocked': false, // рекомендую одразу додати
+    });
+    // Додатково — реєструємо нікнейм
+    await _firestore.collection('nicknames').doc(nickname).set({
+      'uid': user.uid,
+      'createdAt': FieldValue.serverTimestamp(),
     });
   }
+
 
   Future<User?> login(String email, String password) async {
     try {
       final result = await _auth.signInWithEmailAndPassword(email: email, password: password);
-      return result.user;
+      final user = result.user;
+
+      if (user == null) return null;
+
+      final doc = await _firestore.collection('users').doc(user.uid).get();
+
+      final data = doc.data();
+
+      if (doc.exists && data?['isBlocked'] == true) {
+        await _auth.signOut(); // обов’язково — щоб не залишити користувача залогіненим
+
+        final blockReason = data?['blockReason'] ?? 'Без причини';
+        final blockedAtRaw = data?['blockedAt'];
+        String blockedAtFormatted = '';
+
+        if (blockedAtRaw is Timestamp) {
+          final date = blockedAtRaw.toDate();
+          blockedAtFormatted =
+          '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year} '
+              '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+        }
+
+        throw FirebaseAuthException(
+          code: 'blocked-user',
+          message: 'Акаунт заблоковано.\n📝 Причина: $blockReason\n📅 Дата: $blockedAtFormatted',
+        );
+      }
+
+      return user;
+
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found' || e.code == 'invalid-credential') {
         throw FirebaseAuthException(
@@ -35,6 +72,7 @@ class AuthService {
       rethrow;
     }
   }
+
 
 
   Future<bool> isAdmin() async {
@@ -78,6 +116,17 @@ class AuthService {
     }
 
     final uid = user.uid;
+
+    try {
+      // Отримуємо нікнейм, якщо є
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final nickname = userDoc.data()?['nickname'];
+      if (nickname != null) {
+        await FirebaseFirestore.instance.collection('nicknames').doc(nickname).delete();
+      }
+    } catch (e) {
+      debugPrint('Не вдалося видалити нікнейм: $e');
+    }
 
     try {
       final cred = EmailAuthProvider.credential(email: user.email!, password: password);
@@ -160,11 +209,66 @@ class AuthService {
     }
   }
 
-
-
   Future<void> logout() async {
     await _auth.signOut();
   }
+
+  Future<void> blockUser(String userId, String reason) async {
+    await _firestore.collection('users').doc(userId).update({
+      'isBlocked': true,
+      'blockedAt': Timestamp.now(),
+      'blockReason': reason.isEmpty ? 'Без причини' : reason,
+    });
+  }
+
+  Future<void> unblockUser(String userId) async {
+    await _firestore.collection('users').doc(userId).update({
+      'isBlocked': false,
+      'blockedAt': FieldValue.delete(),
+      'blockReason': FieldValue.delete(),
+    });
+  }
+
+  Future<bool> isNicknameTaken(String nickname) async {
+    final doc = await _firestore.collection('nicknames').doc(nickname).get();
+    return doc.exists;
+  }
+
+  Future<bool> updateNickname(String newNickname) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return false;
+
+    final uid = user.uid;
+
+    // Перевірка, чи вже зайнятий
+    final nicknameTaken = await isNicknameTaken(newNickname);
+    if (nicknameTaken) return false;
+
+    final batch = FirebaseFirestore.instance.batch();
+
+    // 1. Видаляємо старий нікнейм
+    final userDoc = await _firestore.collection('users').doc(uid).get();
+    final oldNickname = userDoc.data()?['nickname'];
+    if (oldNickname != null) {
+      batch.delete(_firestore.collection('nicknames').doc(oldNickname));
+    }
+
+    // 2. Оновлюємо поле nickname у users
+    batch.update(_firestore.collection('users').doc(uid), {
+      'nickname': newNickname,
+    });
+
+    // 3. Додаємо новий нікнейм
+    batch.set(_firestore.collection('nicknames').doc(newNickname), {
+      'uid': uid,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+
+    await batch.commit();
+    return true;
+  }
+
+
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 }

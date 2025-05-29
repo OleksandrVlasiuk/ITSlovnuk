@@ -84,7 +84,7 @@ class _ArchivedDeckPageState extends State<ArchivedDeckPage> {
       backgroundColor: const Color(0xFF1C1C1C),
       appBar: AppBar(
         backgroundColor: const Color(0xFF2B2B2B),
-        title: const Text('ITСловник', style: TextStyle(color: Colors.white)),
+        title: const Text('Перегляд колоди', style: TextStyle(color: Colors.white)),
         centerTitle: true,
         leading: const BackButton(color: Colors.white),
       ),

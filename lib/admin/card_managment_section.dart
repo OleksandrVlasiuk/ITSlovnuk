@@ -27,6 +27,7 @@ class _CardManagmentSectionState extends State<CardManagmentSection> {
 
   String title = '';
   String userEmail = '';
+  String userNickname = '';
   String role = 'user';
   String moderationStatus = '';
   String publicationMode = '';
@@ -72,6 +73,7 @@ class _CardManagmentSectionState extends State<CardManagmentSection> {
       final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
       final userData = userDoc.data();
       userEmail = userData?['email'] ?? 'Невідомо';
+      userNickname = userData?['nickname'] ?? '';
       role = userData?['role'] ?? 'user';
     }
 
@@ -120,7 +122,7 @@ class _CardManagmentSectionState extends State<CardManagmentSection> {
       backgroundColor: const Color(0xFF1C1C1C),
       appBar: AppBar(
         backgroundColor: const Color(0xFF2B2B2B),
-        title: const Text('ITСловник', style: TextStyle(color: Colors.white)),
+        title: const Text('Перегляд колоди', style: TextStyle(color: Colors.white)),
         centerTitle: true,
         leading: const BackButton(color: Colors.white),
       ),
@@ -178,29 +180,64 @@ class _CardManagmentSectionState extends State<CardManagmentSection> {
             const SizedBox(height: 8),
             Text('ID колоди: ${widget.deckId}', style: const TextStyle(color: Colors.white38, fontSize: 14)),
             const SizedBox(height: 12),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              child: const Divider(thickness: 1, height: 1, color: Colors.white30),
+            ),
+
+            const SizedBox(height: 6),
+            const Text('Автор', style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 6),
+
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text('Автор: ', style: TextStyle(color: Colors.white70 , fontSize: 16)),
-                Expanded(
+                const Text('Пошта: ', style: TextStyle(color: Colors.white70, fontSize: 16)),
+                Flexible(
                   child: Text(
                     userEmail,
                     style: const TextStyle(color: Colors.white70, fontSize: 16),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const SizedBox(width: 6),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: role == 'admin' ? Colors.orange : Colors.blueGrey,
-                    borderRadius: BorderRadius.circular(12),
+                const SizedBox(width: 12),
+                if (role == 'admin')
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.orange,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Text(
+                      'admin',
+                      style: TextStyle(color: Colors.white, fontSize: 11),
+                    ),
                   ),
+              ],
+            ),
+
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Text('Нікнейм: ', style: TextStyle(color: Colors.white70, fontSize: 16)),
+                Expanded(
                   child: Text(
-                    role,
-                    style: const TextStyle(color: Colors.white, fontSize: 11),
+                    userNickname.isNotEmpty ? userNickname : '—',
+                    style: const TextStyle(color: Colors.white70, fontSize: 16),
                   ),
                 ),
               ],
             ),
+
+            const SizedBox(height: 6),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              child: const Divider(thickness: 1, height: 1, color: Colors.white30),
+            ),
+
+            const SizedBox(height: 6),
+            const Text('Колода', style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 6),
             Text('Статус: ${_formatStatus()}', style: const TextStyle(color: Colors.white70, fontSize: 16)),
             if (widget.collection == 'published_decks') ...[
               Text('Тип публікації: ${publicationMode == 'permanent' ? 'Назавжди' : 'Тимчасова'}',
@@ -226,7 +263,12 @@ class _CardManagmentSectionState extends State<CardManagmentSection> {
             if (publishedAt != null && widget.collection == 'published_decks')
               Text('Опубліковано: ${_formatDate(publishedAt)}',
                   style: const TextStyle(color: Colors.white70, fontSize: 16)),
-            const SizedBox(height: 20),
+            const SizedBox(height: 6),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              child: const Divider(thickness: 1, height: 1, color: Colors.white30),
+            ),
+            const SizedBox(height: 4),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -269,7 +311,7 @@ class _CardManagmentSectionState extends State<CardManagmentSection> {
                 },
               ),
             ),
-            const SizedBox(height: 50),
+            const SizedBox(height: 20),
             _buildActionButtons(),
           ],
         ),

@@ -376,16 +376,16 @@ class _DeckModerationListState extends State<DeckModerationList> {
             return FutureBuilder<DocumentSnapshot>(
               future: FirebaseFirestore.instance.collection('users').doc(userId).get(),
               builder: (context, userSnapshot) {
-                String userEmail = 'Невідомо';
+                String nickname = 'Невідомо';
                 String role = 'user'; // за замовчуванням
 
                 if (userSnapshot.hasData && userSnapshot.data!.exists) {
                   final userData = userSnapshot.data!.data() as Map<String, dynamic>;
-                  userEmail = (userData['email'] ?? '').toString().toLowerCase();
+                  nickname = (userData['nickname'] ?? '').toString().toLowerCase();
                   role = (userData['role'] ?? 'user').toString().toLowerCase();
 
-                  final emailFilter = _filters['email']?.toString().toLowerCase() ?? '';
-                  if (emailFilter.isNotEmpty && !userEmail.contains(emailFilter)) {
+                  final nicknameFilter = _filters['nickname']?.toString().toLowerCase() ?? '';
+                  if (nicknameFilter.isNotEmpty && !nickname.contains(nicknameFilter)) {
                     return const SizedBox.shrink();
                   }
 
@@ -500,7 +500,7 @@ class _DeckModerationListState extends State<DeckModerationList> {
                                     // Email (обрізатиметься, якщо довгий)
                                     Expanded(
                                       child: Text(
-                                        userEmail,
+                                        nickname,
                                         style: const TextStyle(color: Colors.grey),
                                         overflow: TextOverflow.ellipsis,
                                       ),

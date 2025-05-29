@@ -150,7 +150,7 @@ class _DeckPageState extends State<DeckPage> {
             onPressed: () => Navigator.pop(context, updated),
           ),
           title: const Text(
-            'ITСловник',
+            'Перегляд колоди',
             style: TextStyle(color: Colors.white),
           ),
           centerTitle: true,

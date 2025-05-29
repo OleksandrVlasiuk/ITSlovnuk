@@ -19,7 +19,7 @@ class DeckModerationFilters extends StatefulWidget {
 
 
 class DeckModerationFiltersState extends State<DeckModerationFilters> {
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _nicknameController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   String? _thirdFilter;
   String? _sortDateFilter;
@@ -33,13 +33,13 @@ class DeckModerationFiltersState extends State<DeckModerationFilters> {
   @override
   void initState() {
     super.initState();
-    _emailController.addListener(_onChanged);
+    _nicknameController.addListener(_onChanged);
     _titleController.addListener(_onChanged);
   }
 
   void _onChanged() {
     widget.onChanged({
-      'email': _emailController.text.trim().toLowerCase(),
+      'nickname': _nicknameController.text.trim().toLowerCase(),
       'title': _titleController.text.trim().toLowerCase(),
       'third': _thirdFilter?.isEmpty == true ? null : _thirdFilter,
       'sortDate': _sortDateFilter,
@@ -54,7 +54,7 @@ class DeckModerationFiltersState extends State<DeckModerationFilters> {
   }
 
   void _clearFilters() {
-    _emailController.clear();
+    _nicknameController.clear();
     _titleController.clear();
     setState(() {
       _thirdFilter = null;
@@ -113,12 +113,12 @@ class DeckModerationFiltersState extends State<DeckModerationFilters> {
         Expanded(
           flex: 3,
           child: TextField(
-            controller: _emailController,
+            controller: _nicknameController,
             style: const TextStyle(color: Colors.white, fontSize: 12),
             decoration: InputDecoration(
               isDense: true,
               contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-              labelText: 'Пошта',
+              labelText: 'Нікнейм',
               labelStyle: const TextStyle(color: Colors.white60, fontSize: 11),
               filled: true,
               fillColor: Colors.black26,
@@ -319,7 +319,7 @@ class DeckModerationFiltersState extends State<DeckModerationFilters> {
   }
 
   void clearAll() {
-    _emailController.clear();
+    _nicknameController.clear();
     _titleController.clear();
     setState(() {
       _thirdFilter = null;
