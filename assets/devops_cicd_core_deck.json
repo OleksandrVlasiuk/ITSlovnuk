@@ -1,0 +1,102 @@
+[
+  {
+    "term": "DevOps",
+    "definitionEng": "A set of practices that combines software development and IT operations.",
+    "definitionUkr": "Набір практик, що об'єднує розробку програмного забезпечення та IT-операції."
+  },
+  {
+    "term": "CI/CD",
+    "definitionEng": "Continuous Integration and Continuous Delivery/Deployment.",
+    "definitionUkr": "Безперервна інтеграція та доставка/розгортання."
+  },
+  {
+    "term": "Pipeline",
+    "definitionEng": "A set of automated processes that allow code to be built, tested, and deployed.",
+    "definitionUkr": "Набір автоматизованих процесів для побудови, тестування та розгортання коду."
+  },
+  {
+    "term": "YAML",
+    "definitionEng": "A human-readable data-serialization language often used for configuration.",
+    "definitionUkr": "Людиночитна мова серіалізації даних, часто використовується для конфігурацій."
+  },
+  {
+    "term": "Docker",
+    "definitionEng": "A platform to develop, ship, and run applications inside containers.",
+    "definitionUkr": "Платформа для розробки, доставки та запуску застосунків у контейнерах."
+  },
+  {
+    "term": "Kubernetes",
+    "definitionEng": "An open-source system for automating deployment, scaling, and management of containerized applications.",
+    "definitionUkr": "Відкрита система для автоматизації розгортання, масштабування та управління контейнеризованими застосунками."
+  },
+  {
+    "term": "Container",
+    "definitionEng": "A standard unit of software that packages code and dependencies together.",
+    "definitionUkr": "Стандартна одиниця програмного забезпечення, що об'єднує код та залежності."
+  },
+  {
+    "term": "Jenkins",
+    "definitionEng": "An open-source automation server used to build, test, and deploy software.",
+    "definitionUkr": "Відкритий сервер автоматизації для побудови, тестування та розгортання ПЗ."
+  },
+  {
+    "term": "Artifact",
+    "definitionEng": "A file or collection of files generated during the build process.",
+    "definitionUkr": "Файл або набір файлів, створених під час процесу збирання."
+  },
+  {
+    "term": "Monitoring",
+    "definitionEng": "Observing and checking the progress or quality of something over a period of time.",
+    "definitionUkr": "Спостереження та перевірка ходу чи якості чогось протягом певного часу."
+  },
+  {
+    "term": "Infrastructure as Code",
+    "definitionEng": "Managing and provisioning computing infrastructure through machine-readable files.",
+    "definitionUkr": "Управління інфраструктурою за допомогою машинозчитуваних файлів."
+  },
+  {
+    "term": "Rollback",
+    "definitionEng": "Reverting a system or application to a previous state.",
+    "definitionUkr": "Повернення системи або застосунку до попереднього стану."
+  },
+  {
+    "term": "Environment",
+    "definitionEng": "A specific configuration of software and hardware for a particular use case.",
+    "definitionUkr": "Специфічна конфігурація програмного та апаратного забезпечення для конкретного випадку."
+  },
+  {
+    "term": "Staging",
+    "definitionEng": "A replica of the production environment used for testing.",
+    "definitionUkr": "Копія продакшн-середовища, що використовується для тестування."
+  },
+  {
+    "term": "Production",
+    "definitionEng": "The live environment where real users interact with the application.",
+    "definitionUkr": "Живе середовище, в якому справжні користувачі взаємодіють із застосунком."
+  },
+  {
+    "term": "Secrets",
+    "definitionEng": "Sensitive data such as API keys, passwords, and tokens.",
+    "definitionUkr": "Конфіденційні дані, як-от ключі API, паролі та токени."
+  },
+  {
+    "term": "GitOps",
+    "definitionEng": "A way to do Kubernetes cluster management and application delivery using Git as a source of truth.",
+    "definitionUkr": "Метод управління кластерами Kubernetes та доставки застосунків з використанням Git як єдиного джерела правди."
+  },
+  {
+    "term": "Helm",
+    "definitionEng": "A package manager for Kubernetes applications.",
+    "definitionUkr": "Менеджер пакетів для застосунків у Kubernetes."
+  },
+  {
+    "term": "Auto-scaling",
+    "definitionEng": "Automatically adjusting the number of computing resources based on load.",
+    "definitionUkr": "Автоматичне коригування кількості обчислювальних ресурсів залежно від навантаження."
+  },
+  {
+    "term": "Terraform",
+    "definitionEng": "An open-source tool to provision infrastructure as code.",
+    "definitionUkr": "Відкрита утиліта для забезпечення інфраструктури як коду."
+  }
+]

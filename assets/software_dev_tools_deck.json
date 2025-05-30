@@ -1,0 +1,107 @@
+[
+  {
+    "term": "Git",
+    "definitionEng": "A distributed version control system used to track changes in code",
+    "definitionUkr": "Git — розподілена система контролю версій для відстеження змін у коді"
+  },
+  {
+    "term": "GitHub",
+    "definitionEng": "A web-based platform for hosting and collaborating on Git repositories",
+    "definitionUkr": "GitHub — вебплатформа для розміщення Git-репозиторіїв і спільної розробки"
+  },
+  {
+    "term": "Bitbucket",
+    "definitionEng": "A Git repository management solution for professional teams",
+    "definitionUkr": "Bitbucket — система керування Git-репозиторіями для професійних команд"
+  },
+  {
+    "term": "GitLab",
+    "definitionEng": "A DevOps platform providing source code management and CI/CD",
+    "definitionUkr": "GitLab — DevOps-платформа з підтримкою керування кодом і CI/CD"
+  },
+  {
+    "term": "Docker",
+    "definitionEng": "A platform to develop, ship, and run applications in containers",
+    "definitionUkr": "Docker — платформа для розробки, доставки і запуску застосунків у контейнерах"
+  },
+  {
+    "term": "Kubernetes",
+    "definitionEng": "An orchestration system for automating deployment and scaling of containers",
+    "definitionUkr": "Kubernetes — система оркестрації для автоматизації розгортання і масштабування контейнерів"
+  },
+  {
+    "term": "Jenkins",
+    "definitionEng": "An open-source automation server for building and deploying code",
+    "definitionUkr": "Jenkins — open-source сервер автоматизації для збірки і розгортання коду"
+  },
+  {
+    "term": "CircleCI",
+    "definitionEng": "A CI/CD platform that automates development workflows",
+    "definitionUkr": "CircleCI — платформа CI/CD для автоматизації процесів розробки"
+  },
+  {
+    "term": "Travis CI",
+    "definitionEng": "A continuous integration service for GitHub projects",
+    "definitionUkr": "Travis CI — сервіс безперервної інтеграції для проєктів на GitHub"
+  },
+  {
+    "term": "VS Code",
+    "definitionEng": "A lightweight but powerful code editor developed by Microsoft",
+    "definitionUkr": "VS Code — легкий, але потужний редактор коду від Microsoft"
+  },
+  {
+    "term": "IntelliJ IDEA",
+    "definitionEng": "An IDE for JVM-based development, especially Java",
+    "definitionUkr": "IntelliJ IDEA — середовище розробки для мов на JVM, особливо Java"
+  },
+  {
+    "term": "Eclipse",
+    "definitionEng": "An IDE primarily for Java development",
+    "definitionUkr": "Eclipse — інтегроване середовище розробки, головно для Java"
+  },
+  {
+    "term": "PyCharm",
+    "definitionEng": "An IDE specifically for Python development",
+    "definitionUkr": "PyCharm — середовище розробки, спеціалізоване для Python"
+  },
+  {
+    "term": "Postman",
+    "definitionEng": "A tool for API testing, documentation and debugging",
+    "definitionUkr": "Postman — інструмент для тестування, документування та налагодження API"
+  },
+  {
+    "term": "Swagger",
+    "definitionEng": "A framework for designing and visualizing REST APIs",
+    "definitionUkr": "Swagger — фреймворк для проектування та візуалізації REST API"
+  },
+  {
+    "term": "SonarQube",
+    "definitionEng": "A tool for continuous inspection of code quality",
+    "definitionUkr": "SonarQube — інструмент для безперервної перевірки якості коду"
+  },
+  {
+    "term": "Figma",
+    "definitionEng": "A collaborative interface design tool",
+    "definitionUkr": "Figma — інструмент для спільного проєктування інтерфейсів"
+  },
+  {
+    "term": "Trello",
+    "definitionEng": "A visual tool for task and project management",
+    "definitionUkr": "Trello — візуальний інструмент для управління задачами та проєктами"
+  },
+  {
+    "term": "Jira",
+    "definitionEng": "A tool for tracking issues and agile project management",
+    "definitionUkr": "Jira — інструмент для відстеження помилок та управління agile-проєктами"
+  },
+  {
+    "term": "Slack",
+    "definitionEng": "A collaboration platform for teams, integrating tools and messaging",
+    "definitionUkr": "Slack — платформа для командної співпраці з інтеграцією інструментів і повідомлень"
+  },
+  {
+    "term": "Ngrok",
+    "definitionEng": "A tool to expose local servers to the internet securely",
+    "definitionUkr": "Ngrok — інструмент для безпечного відкриття локального сервера в Інтернет"
+  }
+]

@@ -1,0 +1,782 @@
+[
+  {
+    "term": "algorithm",
+    "definitionEng": "algorithm",
+    "definitionUkr": "алгоритм"
+  },
+  {
+    "term": "API",
+    "definitionEng": "API",
+    "definitionUkr": "інтерфейс прикладного програмування"
+  },
+  {
+    "term": "array",
+    "definitionEng": "array",
+    "definitionUkr": "масив"
+  },
+  {
+    "term": "backend",
+    "definitionEng": "backend",
+    "definitionUkr": "бекенд"
+  },
+  {
+    "term": "binary",
+    "definitionEng": "binary",
+    "definitionUkr": "двійковий"
+  },
+  {
+    "term": "boolean",
+    "definitionEng": "boolean",
+    "definitionUkr": "булевий тип"
+  },
+  {
+    "term": "bug",
+    "definitionEng": "bug",
+    "definitionUkr": "помилка"
+  },
+  {
+    "term": "cache",
+    "definitionEng": "cache",
+    "definitionUkr": "кеш"
+  },
+  {
+    "term": "class",
+    "definitionEng": "class",
+    "definitionUkr": "клас"
+  },
+  {
+    "term": "cloud",
+    "definitionEng": "cloud",
+    "definitionUkr": "хмара"
+  },
+  {
+    "term": "compiler",
+    "definitionEng": "compiler",
+    "definitionUkr": "компілятор"
+  },
+  {
+    "term": "CPU",
+    "definitionEng": "CPU",
+    "definitionUkr": "центральний процесор"
+  },
+  {
+    "term": "CSS",
+    "definitionEng": "CSS",
+    "definitionUkr": "каскадні таблиці стилів"
+  },
+  {
+    "term": "data",
+    "definitionEng": "data",
+    "definitionUkr": "дані"
+  },
+  {
+    "term": "database",
+    "definitionEng": "database",
+    "definitionUkr": "база даних"
+  },
+  {
+    "term": "debug",
+    "definitionEng": "debug",
+    "definitionUkr": "налагодження"
+  },
+  {
+    "term": "deploy",
+    "definitionEng": "deploy",
+    "definitionUkr": "розгортати"
+  },
+  {
+    "term": "devops",
+    "definitionEng": "devops",
+    "definitionUkr": "девопс"
+  },
+  {
+    "term": "encryption",
+    "definitionEng": "encryption",
+    "definitionUkr": "шифрування"
+  },
+  {
+    "term": "exception",
+    "definitionEng": "exception",
+    "definitionUkr": "виключення"
+  },
+  {
+    "term": "framework",
+    "definitionEng": "framework",
+    "definitionUkr": "фреймворк"
+  },
+  {
+    "term": "frontend",
+    "definitionEng": "frontend",
+    "definitionUkr": "фронтенд"
+  },
+  {
+    "term": "function",
+    "definitionEng": "function",
+    "definitionUkr": "функція"
+  },
+  {
+    "term": "git",
+    "definitionEng": "git",
+    "definitionUkr": "гіт"
+  },
+  {
+    "term": "HTML",
+    "definitionEng": "HTML",
+    "definitionUkr": "мова розмітки гіпертексту"
+  },
+  {
+    "term": "HTTP",
+    "definitionEng": "HTTP",
+    "definitionUkr": "протокол передачі гіпертексту"
+  },
+  {
+    "term": "IDE",
+    "definitionEng": "IDE",
+    "definitionUkr": "інтегроване середовище розробки"
+  },
+  {
+    "term": "inheritance",
+    "definitionEng": "inheritance",
+    "definitionUkr": "успадкування"
+  },
+  {
+    "term": "interface",
+    "definitionEng": "interface",
+    "definitionUkr": "інтерфейс"
+  },
+  {
+    "term": "Java",
+    "definitionEng": "Java",
+    "definitionUkr": "Джава"
+  },
+  {
+    "term": "JavaScript",
+    "definitionEng": "JavaScript",
+    "definitionUkr": "ДжаваСкрипт"
+  },
+  {
+    "term": "JSON",
+    "definitionEng": "JSON",
+    "definitionUkr": "формат обміну даними JSON"
+  },
+  {
+    "term": "library",
+    "definitionEng": "library",
+    "definitionUkr": "бібліотека"
+  },
+  {
+    "term": "Linux",
+    "definitionEng": "Linux",
+    "definitionUkr": "Лінукс"
+  },
+  {
+    "term": "loop",
+    "definitionEng": "loop",
+    "definitionUkr": "цикл"
+  },
+  {
+    "term": "machine learning",
+    "definitionEng": "machine learning",
+    "definitionUkr": "машинне навчання"
+  },
+  {
+    "term": "method",
+    "definitionEng": "method",
+    "definitionUkr": "метод"
+  },
+  {
+    "term": "mobile",
+    "definitionEng": "mobile",
+    "definitionUkr": "мобільний"
+  },
+  {
+    "term": "network",
+    "definitionEng": "network",
+    "definitionUkr": "мережа"
+  },
+  {
+    "term": "null",
+    "definitionEng": "null",
+    "definitionUkr": "нульовий"
+  },
+  {
+    "term": "object",
+    "definitionEng": "object",
+    "definitionUkr": "об'єкт"
+  },
+  {
+    "term": "OOP",
+    "definitionEng": "OOP",
+    "definitionUkr": "об'єктно-орієнтоване програмування"
+  },
+  {
+    "term": "package",
+    "definitionEng": "package",
+    "definitionUkr": "пакет"
+  },
+  {
+    "term": "parameter",
+    "definitionEng": "parameter",
+    "definitionUkr": "параметр"
+  },
+  {
+    "term": "patch",
+    "definitionEng": "patch",
+    "definitionUkr": "латка"
+  },
+  {
+    "term": "performance",
+    "definitionEng": "performance",
+    "definitionUkr": "продуктивність"
+  },
+  {
+    "term": "PHP",
+    "definitionEng": "PHP",
+    "definitionUkr": "ПХП"
+  },
+  {
+    "term": "Python",
+    "definitionEng": "Python",
+    "definitionUkr": "Пайтон"
+  },
+  {
+    "term": "query",
+    "definitionEng": "query",
+    "definitionUkr": "запит"
+  },
+  {
+    "term": "queue",
+    "definitionEng": "queue",
+    "definitionUkr": "черга"
+  },
+  {
+    "term": "recursion",
+    "definitionEng": "recursion",
+    "definitionUkr": "рекурсія"
+  },
+  {
+    "term": "refactor",
+    "definitionEng": "refactor",
+    "definitionUkr": "рефакторинг"
+  },
+  {
+    "term": "repository",
+    "definitionEng": "repository",
+    "definitionUkr": "репозиторій"
+  },
+  {
+    "term": "REST",
+    "definitionEng": "REST",
+    "definitionUkr": "архітектура REST"
+  },
+  {
+    "term": "runtime",
+    "definitionEng": "runtime",
+    "definitionUkr": "час виконання"
+  },
+  {
+    "term": "script",
+    "definitionEng": "script",
+    "definitionUkr": "скрипт"
+  },
+  {
+    "term": "server",
+    "definitionEng": "server",
+    "definitionUkr": "сервер"
+  },
+  {
+    "term": "stack",
+    "definitionEng": "stack",
+    "definitionUkr": "стек"
+  },
+  {
+    "term": "statement",
+    "definitionEng": "statement",
+    "definitionUkr": "оператор"
+  },
+  {
+    "term": "string",
+    "definitionEng": "string",
+    "definitionUkr": "рядок"
+  },
+  {
+    "term": "syntax",
+    "definitionEng": "syntax",
+    "definitionUkr": "синтаксис"
+  },
+  {
+    "term": "test",
+    "definitionEng": "test",
+    "definitionUkr": "тест"
+  },
+  {
+    "term": "thread",
+    "definitionEng": "thread",
+    "definitionUkr": "потік"
+  },
+  {
+    "term": "token",
+    "definitionEng": "token",
+    "definitionUkr": "токен"
+  },
+  {
+    "term": "UI",
+    "definitionEng": "UI",
+    "definitionUkr": "інтерфейс користувача"
+  },
+  {
+    "term": "UX",
+    "definitionEng": "UX",
+    "definitionUkr": "досвід користувача"
+  },
+  {
+    "term": "variable",
+    "definitionEng": "variable",
+    "definitionUkr": "змінна"
+  },
+  {
+    "term": "version control",
+    "definitionEng": "version control",
+    "definitionUkr": "система керування версіями"
+  },
+  {
+    "term": "virtual machine",
+    "definitionEng": "virtual machine",
+    "definitionUkr": "віртуальна машина"
+  },
+  {
+    "term": "web",
+    "definitionEng": "web",
+    "definitionUkr": "веб"
+  },
+  {
+    "term": "Windows",
+    "definitionEng": "Windows",
+    "definitionUkr": "Віндовс"
+  },
+  {
+    "term": "price",
+    "definitionEng": "price",
+    "definitionUkr": "base"
+  },
+  {
+    "term": "listen",
+    "definitionEng": "listen",
+    "definitionUkr": "true"
+  },
+  {
+    "term": "continue",
+    "definitionEng": "continue",
+    "definitionUkr": "relationship"
+  },
+  {
+    "term": "everything",
+    "definitionEng": "everything",
+    "definitionUkr": "simple"
+  },
+  {
+    "term": "throughout",
+    "definitionEng": "throughout",
+    "definitionUkr": "maybe"
+  },
+  {
+    "term": "car",
+    "definitionEng": "car",
+    "definitionUkr": "final"
+  },
+  {
+    "term": "attack",
+    "definitionEng": "attack",
+    "definitionUkr": "assume"
+  },
+  {
+    "term": "wish",
+    "definitionEng": "wish",
+    "definitionUkr": "with"
+  },
+  {
+    "term": "president",
+    "definitionEng": "president",
+    "definitionUkr": "list"
+  },
+  {
+    "term": "through",
+    "definitionEng": "through",
+    "definitionUkr": "improve"
+  },
+  {
+    "term": "how",
+    "definitionEng": "how",
+    "definitionUkr": "cause"
+  },
+  {
+    "term": "even",
+    "definitionEng": "even",
+    "definitionUkr": "city"
+  },
+  {
+    "term": "risk",
+    "definitionEng": "risk",
+    "definitionUkr": "ask"
+  },
+  {
+    "term": "least",
+    "definitionEng": "least",
+    "definitionUkr": "create"
+  },
+  {
+    "term": "possible",
+    "definitionEng": "possible",
+    "definitionUkr": "whole"
+  },
+  {
+    "term": "long",
+    "definitionEng": "long",
+    "definitionUkr": "yard"
+  },
+  {
+    "term": "purpose",
+    "definitionEng": "purpose",
+    "definitionUkr": "still"
+  },
+  {
+    "term": "policy",
+    "definitionEng": "policy",
+    "definitionUkr": "meet"
+  },
+  {
+    "term": "different",
+    "definitionEng": "different",
+    "definitionUkr": "light"
+  },
+  {
+    "term": "standard",
+    "definitionEng": "standard",
+    "definitionUkr": "treat"
+  },
+  {
+    "term": "space",
+    "definitionEng": "space",
+    "definitionUkr": "above"
+  },
+  {
+    "term": "direction",
+    "definitionEng": "direction",
+    "definitionUkr": "trial"
+  },
+  {
+    "term": "lose",
+    "definitionEng": "lose",
+    "definitionUkr": "beyond"
+  },
+  {
+    "term": "dark",
+    "definitionEng": "dark",
+    "definitionUkr": "consider"
+  },
+  {
+    "term": "throughout",
+    "definitionEng": "throughout",
+    "definitionUkr": "maybe"
+  },
+  {
+    "term": "billion",
+    "definitionEng": "billion",
+    "definitionUkr": "major"
+  },
+  {
+    "term": "yeah",
+    "definitionEng": "yeah",
+    "definitionUkr": "main"
+  },
+  {
+    "term": "hear",
+    "definitionEng": "hear",
+    "definitionUkr": "bank"
+  },
+  {
+    "term": "take",
+    "definitionEng": "take",
+    "definitionUkr": "bit"
+  },
+  {
+    "term": "thank",
+    "definitionEng": "thank",
+    "definitionUkr": "individual"
+  },
+  {
+    "term": "hot",
+    "definitionEng": "hot",
+    "definitionUkr": "let"
+  },
+  {
+    "term": "concern",
+    "definitionEng": "concern",
+    "definitionUkr": "bag"
+  },
+  {
+    "term": "doctor",
+    "definitionEng": "doctor",
+    "definitionUkr": "find"
+  },
+  {
+    "term": "bring",
+    "definitionEng": "bring",
+    "definitionUkr": "much"
+  },
+  {
+    "term": "identify",
+    "definitionEng": "identify",
+    "definitionUkr": "happy"
+  },
+  {
+    "term": "different",
+    "definitionEng": "different",
+    "definitionUkr": "capital"
+  },
+  {
+    "term": "public",
+    "definitionEng": "public",
+    "definitionUkr": "various"
+  },
+  {
+    "term": "send",
+    "definitionEng": "send",
+    "definitionUkr": "share"
+  },
+  {
+    "term": "similar",
+    "definitionEng": "similar",
+    "definitionUkr": "place"
+  },
+  {
+    "term": "company",
+    "definitionEng": "company",
+    "definitionUkr": "pretty"
+  },
+  {
+    "term": "board",
+    "definitionEng": "board",
+    "definitionUkr": "management"
+  },
+  {
+    "term": "night",
+    "definitionEng": "night",
+    "definitionUkr": "two"
+  },
+  {
+    "term": "father",
+    "definitionEng": "father",
+    "definitionUkr": "building"
+  },
+  {
+    "term": "here",
+    "definitionEng": "here",
+    "definitionUkr": "born"
+  },
+  {
+    "term": "song",
+    "definitionEng": "song",
+    "definitionUkr": "accept"
+  },
+  {
+    "term": "floor",
+    "definitionEng": "floor",
+    "definitionUkr": "cultural"
+  },
+  {
+    "term": "citizen",
+    "definitionEng": "citizen",
+    "definitionUkr": "group"
+  },
+  {
+    "term": "general",
+    "definitionEng": "general",
+    "definitionUkr": "president"
+  },
+  {
+    "term": "foreign",
+    "definitionEng": "foreign",
+    "definitionUkr": "center"
+  },
+  {
+    "term": "paper",
+    "definitionEng": "paper",
+    "definitionUkr": "same"
+  },
+  {
+    "term": "name",
+    "definitionEng": "name",
+    "definitionUkr": "nothing"
+  },
+  {
+    "term": "form",
+    "definitionEng": "form",
+    "definitionUkr": "live"
+  },
+  {
+    "term": "listen",
+    "definitionEng": "listen",
+    "definitionUkr": "PM"
+  },
+  {
+    "term": "us",
+    "definitionEng": "us",
+    "definitionUkr": "officer"
+  },
+  {
+    "term": "woman",
+    "definitionEng": "woman",
+    "definitionUkr": "deal"
+  },
+  {
+    "term": "fact",
+    "definitionEng": "fact",
+    "definitionUkr": "who"
+  },
+  {
+    "term": "TV",
+    "definitionEng": "TV",
+    "definitionUkr": "single"
+  },
+  {
+    "term": "difficult",
+    "definitionEng": "difficult",
+    "definitionUkr": "growth"
+  },
+  {
+    "term": "popular",
+    "definitionEng": "popular",
+    "definitionUkr": "significant"
+  },
+  {
+    "term": "arm",
+    "definitionEng": "arm",
+    "definitionUkr": "year"
+  },
+  {
+    "term": "firm",
+    "definitionEng": "firm",
+    "definitionUkr": "myself"
+  },
+  {
+    "term": "movement",
+    "definitionEng": "movement",
+    "definitionUkr": "speak"
+  },
+  {
+    "term": "buy",
+    "definitionEng": "buy",
+    "definitionUkr": "program"
+  },
+  {
+    "term": "eat",
+    "definitionEng": "eat",
+    "definitionUkr": "memory"
+  },
+  {
+    "term": "beat",
+    "definitionEng": "beat",
+    "definitionUkr": "stop"
+  },
+  {
+    "term": "risk",
+    "definitionEng": "risk",
+    "definitionUkr": "popular"
+  },
+  {
+    "term": "economy",
+    "definitionEng": "economy",
+    "definitionUkr": "high"
+  },
+  {
+    "term": "after",
+    "definitionEng": "after",
+    "definitionUkr": "modern"
+  },
+  {
+    "term": "need",
+    "definitionEng": "need",
+    "definitionUkr": "mention"
+  },
+  {
+    "term": "support",
+    "definitionEng": "support",
+    "definitionUkr": "old"
+  },
+  {
+    "term": "case",
+    "definitionEng": "case",
+    "definitionUkr": "across"
+  },
+  {
+    "term": "property",
+    "definitionEng": "property",
+    "definitionUkr": "society"
+  },
+  {
+    "term": "bed",
+    "definitionEng": "bed",
+    "definitionUkr": "suddenly"
+  },
+  {
+    "term": "Republican",
+    "definitionEng": "Republican",
+    "definitionUkr": "think"
+  },
+  {
+    "term": "laugh",
+    "definitionEng": "laugh",
+    "definitionUkr": "policy"
+  },
+  {
+    "term": "without",
+    "definitionEng": "without",
+    "definitionUkr": "official"
+  },
+  {
+    "term": "although",
+    "definitionEng": "although",
+    "definitionUkr": "start"
+  },
+  {
+    "term": "be",
+    "definitionEng": "be",
+    "definitionUkr": "other"
+  },
+  {
+    "term": "traditional",
+    "definitionEng": "traditional",
+    "definitionUkr": "kitchen"
+  },
+  {
+    "term": "coach",
+    "definitionEng": "coach",
+    "definitionUkr": "strong"
+  },
+  {
+    "term": "simply",
+    "definitionEng": "simply",
+    "definitionUkr": "weight"
+  },
+  {
+    "term": "interview",
+    "definitionEng": "interview",
+    "definitionUkr": "policy"
+  },
+  {
+    "term": "trial",
+    "definitionEng": "trial",
+    "definitionUkr": "authority"
+  },
+  {
+    "term": "over",
+    "definitionEng": "over",
+    "definitionUkr": "great"
+  },
+  {
+    "term": "as",
+    "definitionEng": "as",
+    "definitionUkr": "everybody"
+  }
+]

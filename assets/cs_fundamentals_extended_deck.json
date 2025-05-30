@@ -1,0 +1,202 @@
+[
+  {
+    "term": "algorithm",
+    "definitionEng": "A step-by-step procedure to solve a problem",
+    "definitionUkr": "алгоритм — покрокова процедура для розв'язання задачі"
+  },
+  {
+    "term": "recursion",
+    "definitionEng": "A function that calls itself",
+    "definitionUkr": "рекурсія — функція, що викликає саму себе"
+  },
+  {
+    "term": "stack",
+    "definitionEng": "A LIFO (last in, first out) data structure",
+    "definitionUkr": "стек — структура даних типу LIFO (останній прийшов — перший вийшов)"
+  },
+  {
+    "term": "queue",
+    "definitionEng": "A FIFO (first in, first out) data structure",
+    "definitionUkr": "черга — структура даних типу FIFO (перший прийшов — перший вийшов)"
+  },
+  {
+    "term": "graph",
+    "definitionEng": "A structure consisting of nodes (vertices) and edges",
+    "definitionUkr": "граф — структура з вузлів і ребер, які їх з'єднують"
+  },
+  {
+    "term": "tree",
+    "definitionEng": "A connected graph without cycles",
+    "definitionUkr": "дерево — зв'язний граф без циклів"
+  },
+  {
+    "term": "set",
+    "definitionEng": "A collection of distinct elements",
+    "definitionUkr": "множина — набір унікальних елементів"
+  },
+  {
+    "term": "function",
+    "definitionEng": "A relation where each input has one output",
+    "definitionUkr": "функція — відповідність, де кожному вхідному значенню відповідає одне вихідне"
+  },
+  {
+    "term": "matrix",
+    "definitionEng": "A rectangular array of numbers",
+    "definitionUkr": "матриця — прямокутна таблиця чисел"
+  },
+  {
+    "term": "vector",
+    "definitionEng": "An ordered list of numbers representing magnitude and direction",
+    "definitionUkr": "вектор — впорядкований набір чисел, що задає напрям і величину"
+  },
+  {
+    "term": "big O notation",
+    "definitionEng": "Describes the upper bound of algorithm complexity",
+    "definitionUkr": "нотація O — описує верхню межу складності алгоритму"
+  },
+  {
+    "term": "binary search",
+    "definitionEng": "Efficient search in a sorted array by halving",
+    "definitionUkr": "бінарний пошук — ефективний пошук у відсортованому масиві поділом навпіл"
+  },
+  {
+    "term": "compiler",
+    "definitionEng": "Translates source code into machine code",
+    "definitionUkr": "компілятор — перетворює вихідний код у машинний"
+  },
+  {
+    "term": "interpreter",
+    "definitionEng": "Executes code line-by-line",
+    "definitionUkr": "інтерпретатор — виконує код построково"
+  },
+  {
+    "term": "finite state machine",
+    "definitionEng": "A model with a finite number of states and transitions",
+    "definitionUkr": "кінцева автоматна машина — модель із фіксованими станами та переходами"
+  },
+  {
+    "term": "asymptotic analysis",
+    "definitionEng": "Study of algorithm efficiency as input grows",
+    "definitionUkr": "асимптотичний аналіз — вивчення ефективності алгоритму при збільшенні вхідних даних"
+  },
+  {
+    "term": "prime number",
+    "definitionEng": "A number divisible only by 1 and itself",
+    "definitionUkr": "просте число — ділиться лише на 1 та саме на себе"
+  },
+  {
+    "term": "permutation",
+    "definitionEng": "An arrangement of elements in a specific order",
+    "definitionUkr": "перестановка — впорядковане розміщення елементів"
+  },
+  {
+    "term": "probability",
+    "definitionEng": "The likelihood of an event occurring",
+    "definitionUkr": "ймовірність — імовірність настання певної події"
+  },
+  {
+    "term": "hash function",
+    "definitionEng": "Maps data to a fixed-size value",
+    "definitionUkr": "хеш-функція — перетворює дані у фіксоване значення"
+  },
+  {
+    "term": "linked list",
+    "definitionEng": "A linear data structure where each element points to the next",
+    "definitionUkr": "зв'язаний список — лінійна структура даних, де кожен елемент вказує на наступний"
+  },
+  {
+    "term": "heap",
+    "definitionEng": "A special tree-based structure that satisfies the heap property",
+    "definitionUkr": "купа — деревоподібна структура з властивістю купи"
+  },
+  {
+    "term": "priority queue",
+    "definitionEng": "A queue where each element has a priority",
+    "definitionUkr": "черга з пріоритетом — елементи обробляються за рівнем пріоритету"
+  },
+  {
+    "term": "depth-first search",
+    "definitionEng": "Graph traversal method that goes deep before backtracking",
+    "definitionUkr": "пошук у глибину — метод обходу графа, що заглиблюється перед поверненням"
+  },
+  {
+    "term": "breadth-first search",
+    "definitionEng": "Graph traversal method that explores neighbors level by level",
+    "definitionUkr": "пошук у ширину — обхід графа по рівнях сусідів"
+  },
+  {
+    "term": "adjacency matrix",
+    "definitionEng": "A matrix representation of graph connections",
+    "definitionUkr": "матриця суміжності — матричне подання зв'язків у графі"
+  },
+  {
+    "term": "truth table",
+    "definitionEng": "A table showing all logical outcomes of boolean expressions",
+    "definitionUkr": "таблиця істинності — таблиця з усіма можливими результатами логічних виразів"
+  },
+  {
+    "term": "proposition",
+    "definitionEng": "A statement that is either true or false",
+    "definitionUkr": "пропозиція — твердження, що може бути істинним або хибним"
+  },
+  {
+    "term": "boolean algebra",
+    "definitionEng": "A mathematical structure for logical operations",
+    "definitionUkr": "булева алгебра — математична система логічних операцій"
+  },
+  {
+    "term": "modular arithmetic",
+    "definitionEng": "Arithmetic system dealing with remainders",
+    "definitionUkr": "арифметика по модулю — система обчислень із залишками"
+  },
+  {
+    "term": "derivative",
+    "definitionEng": "The rate at which a function changes",
+    "definitionUkr": "похідна — швидкість зміни функції"
+  },
+  {
+    "term": "integral",
+    "definitionEng": "The area under a curve, representing accumulation",
+    "definitionUkr": "інтеграл — площа під кривою, що відображає накопичення"
+  },
+  {
+    "term": "eigenvalue",
+    "definitionEng": "A scalar indicating how a transformation scales vectors",
+    "definitionUkr": "власне значення — скаляр, що показує масштабування вектора після перетворення"
+  },
+  {
+    "term": "variance",
+    "definitionEng": "A measure of data spread around the mean",
+    "definitionUkr": "дисперсія — показник розкиду даних відносно середнього"
+  },
+  {
+    "term": "standard deviation",
+    "definitionEng": "Square root of the variance",
+    "definitionUkr": "середньоквадратичне відхилення — корінь квадратний із дисперсії"
+  },
+  {
+    "term": "regression",
+    "definitionEng": "Statistical method to model relationships between variables",
+    "definitionUkr": "регресія — статистичний метод моделювання залежностей між змінними"
+  },
+  {
+    "term": "gradient descent",
+    "definitionEng": "An optimization algorithm to minimize a function",
+    "definitionUkr": "градієнтний спуск — алгоритм оптимізації для мінімізації функції"
+  },
+  {
+    "term": "NP-complete",
+    "definitionEng": "A class of problems that are verifiable in polynomial time and as hard as any in NP",
+    "definitionUkr": "NP-повна задача — задача, що перевіряється за поліноміальний час і така ж складна, як усі інші в класі NP"
+  },
+  {
+    "term": "pseudocode",
+    "definitionEng": "Informal high-level description of an algorithm",
+    "definitionUkr": "псевдокод — неформальний опис алгоритму на квазімові"
+  },
+  {
+    "term": "bitwise operator",
+    "definitionEng": "Performs operations on binary digits",
+    "definitionUkr": "побітовий оператор — виконує операції над бітами"
+  }
+]

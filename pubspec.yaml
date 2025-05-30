@@ -39,6 +39,7 @@ dependencies:
   cloud_firestore: ^5.6.7
   intl: ^0.18.1
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -60,6 +61,18 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/network_core_deck.json
+    - assets/devops_cicd_core_deck.json
+    - assets/software_architecture_deck.json
+    - assets/cloud_infrastructure_core_deck.json
+    - assets/cs_fundamentals_extended_deck.json
+    - assets/operating_systems_core_deck.json
+    - assets/machine_learning_core_deck.json
+    - assets/software_testing_basics_deck.json
+    - assets/tech_slang_deck.json
+    - assets/software_dev_tools_deck.json
 
   # To add assets to your application, add an assets section, like this:
   # assets:

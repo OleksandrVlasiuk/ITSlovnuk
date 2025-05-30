@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:it_english_app_clean/screens/start_screen.dart';
 import 'package:it_english_app_clean/services/auth_service.dart';
+import 'package:it_english_app_clean/utils/deck_importer.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -111,6 +112,22 @@ class _ProfilePageState extends State<ProfilePage> {
             _buildProfileItem('Видалити профіль', '', _confirmDelete, isDanger: true),
             const SizedBox(height: 24),
             _buildProfileItem('Вийти', '', _logout),
+            /*
+ElevatedButton(
+  onPressed: () async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await importDeckFromJson(user.uid);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Колода імпортована успішно!')),
+      );
+    }
+  },
+  child: const Text('Імпортувати колоду'),
+),
+*/
+
+
           ],
         ),
       ),

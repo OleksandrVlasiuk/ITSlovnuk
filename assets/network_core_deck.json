@@ -1,0 +1,802 @@
+[
+  {
+    "term": "IP address",
+    "definitionEng": "An identifier for a computer or device on a TCP/IP network.",
+    "definitionUkr": "IP-адреса"
+  },
+  {
+    "term": "MAC address",
+    "definitionEng": "A hardware address that uniquely identifies each device on a network.",
+    "definitionUkr": "MAC-адреса"
+  },
+  {
+    "term": "Router",
+    "definitionEng": "A device that forwards data packets between computer networks.",
+    "definitionUkr": "Маршрутизатор"
+  },
+  {
+    "term": "Switch",
+    "definitionEng": "A device that connects devices together on a computer network.",
+    "definitionUkr": "Комутатор"
+  },
+  {
+    "term": "Firewall",
+    "definitionEng": "A network security system that monitors and controls incoming and outgoing network traffic.",
+    "definitionUkr": "Мережевий екран"
+  },
+  {
+    "term": "Subnet",
+    "definitionEng": "A segmented piece of a larger network.",
+    "definitionUkr": "Підмережа"
+  },
+  {
+    "term": "Gateway",
+    "definitionEng": "A node that serves as an access point to another network.",
+    "definitionUkr": "Шлюз"
+  },
+  {
+    "term": "DNS",
+    "definitionEng": "Domain Name System: the phonebook of the internet.",
+    "definitionUkr": "DNS: система доменних імен"
+  },
+  {
+    "term": "DHCP",
+    "definitionEng": "Protocol that automatically assigns IP addresses to devices.",
+    "definitionUkr": "DHCP: протокол автоматичного присвоєння IP"
+  },
+  {
+    "term": "Bandwidth",
+    "definitionEng": "The maximum rate of data transfer across a network.",
+    "definitionUkr": "Пропускна здатність"
+  },
+  {
+    "term": "Latency",
+    "definitionEng": "Delay before a transfer of data begins following an instruction.",
+    "definitionUkr": "Затримка"
+  },
+  {
+    "term": "VPN",
+    "definitionEng": "Virtual Private Network: extends a private network across a public network.",
+    "definitionUkr": "VPN: віртуальна приватна мережа"
+  },
+  {
+    "term": "TCP",
+    "definitionEng": "Transmission Control Protocol: reliable, connection-oriented protocol.",
+    "definitionUkr": "TCP: протокол керування передачею"
+  },
+  {
+    "term": "UDP",
+    "definitionEng": "User Datagram Protocol: connectionless, less reliable protocol.",
+    "definitionUkr": "UDP: протокол дейтаграм користувача"
+  },
+  {
+    "term": "Packet",
+    "definitionEng": "A formatted unit of data carried by a packet-switched network.",
+    "definitionUkr": "Пакет"
+  },
+  {
+    "term": "Port",
+    "definitionEng": "A communication endpoint in computer networking.",
+    "definitionUkr": "Порт"
+  },
+  {
+    "term": "LAN",
+    "definitionEng": "Local Area Network: network in a small geographic area.",
+    "definitionUkr": "LAN: локальна мережа"
+  },
+  {
+    "term": "WAN",
+    "definitionEng": "Wide Area Network: spans a large geographic area.",
+    "definitionUkr": "WAN: глобальна мережа"
+  },
+  {
+    "term": "NAT",
+    "definitionEng": "Network Address Translation: modifies network address information.",
+    "definitionUkr": "NAT: трансляція мережевих адрес"
+  },
+  {
+    "term": "OSI model",
+    "definitionEng": "A conceptual framework used to understand network interactions.",
+    "definitionUkr": "Модель OSI"
+  },
+  {
+    "term": "Ping",
+    "definitionEng": "A network utility to test reachability of a host.",
+    "definitionUkr": "Ping: перевірка доступності вузла"
+  },
+  {
+    "term": "Traceroute",
+    "definitionEng": "A network diagnostic tool for tracking the path to a destination.",
+    "definitionUkr": "Traceroute: трасування маршруту"
+  },
+  {
+    "term": "SSID",
+    "definitionEng": "Service Set Identifier: name of a wireless network.",
+    "definitionUkr": "SSID: ідентифікатор мережі Wi-Fi"
+  },
+  {
+    "term": "802.11",
+    "definitionEng": "Family of standards for wireless networking.",
+    "definitionUkr": "802.11: стандарти Wi-Fi"
+  },
+  {
+    "term": "Ethernet",
+    "definitionEng": "A widely used LAN technology.",
+    "definitionUkr": "Ethernet: технологія локальної мережі"
+  },
+  {
+    "term": "Bridge",
+    "definitionEng": "A device that connects two LANs.",
+    "definitionUkr": "Міст"
+  },
+  {
+    "term": "Proxy",
+    "definitionEng": "An intermediary server separating end users from the websites they browse.",
+    "definitionUkr": "Проксі-сервер"
+  },
+  {
+    "term": "Load Balancer",
+    "definitionEng": "Distributes network or application traffic across servers.",
+    "definitionUkr": "Балансувальник навантаження"
+  },
+  {
+    "term": "DoS Attack",
+    "definitionEng": "Denial-of-Service: attack intended to shut down a machine or network.",
+    "definitionUkr": "Атака типу Відмова в обслуговуванні"
+  },
+  {
+    "term": "Man-in-the-Middle",
+    "definitionEng": "An attacker intercepts communication between two parties.",
+    "definitionUkr": "Атака посередника"
+  },
+  {
+    "term": "SSL",
+    "definitionEng": "Secure Sockets Layer: protocol for securing internet communication.",
+    "definitionUkr": "SSL: протокол безпечного з'єднання"
+  },
+  {
+    "term": "TLS",
+    "definitionEng": "Transport Layer Security: successor to SSL.",
+    "definitionUkr": "TLS: безпечний транспортний протокол"
+  },
+  {
+    "term": "IPv4",
+    "definitionEng": "Internet Protocol version 4: uses 32-bit addresses.",
+    "definitionUkr": "IPv4"
+  },
+  {
+    "term": "IPv6",
+    "definitionEng": "Internet Protocol version 6: uses 128-bit addresses.",
+    "definitionUkr": "IPv6"
+  },
+  {
+    "term": "CIDR",
+    "definitionEng": "Classless Inter-Domain Routing: method for allocating IP addresses.",
+    "definitionUkr": "CIDR: безкласова маршрутизація"
+  },
+  {
+    "term": "Netmask",
+    "definitionEng": "Defines range of IP addresses in a subnet.",
+    "definitionUkr": "Маска підмережі"
+  },
+  {
+    "term": "BGP",
+    "definitionEng": "Border Gateway Protocol: manages how packets are routed across the internet.",
+    "definitionUkr": "BGP: протокол граничного шлюзу"
+  },
+  {
+    "term": "FTP",
+    "definitionEng": "File Transfer Protocol: transfers files over the Internet.",
+    "definitionUkr": "FTP: протокол передачі файлів"
+  },
+  {
+    "term": "HTTP",
+    "definitionEng": "Hypertext Transfer Protocol: foundation of data communication for the web.",
+    "definitionUkr": "HTTP"
+  },
+  {
+    "term": "HTTPS",
+    "definitionEng": "HTTP Secure: encrypted HTTP.",
+    "definitionUkr": "HTTPS: захищений протокол передачі"
+  },
+  {
+    "term": "ICMP",
+    "definitionEng": "Internet Control Message Protocol: used for error messages and diagnostics.",
+    "definitionUkr": "ICMP: протокол керування інтернетом"
+  },
+  {
+    "term": "Socket",
+    "definitionEng": "One endpoint of a two-way communication link.",
+    "definitionUkr": "Сокет"
+  },
+  {
+    "term": "WebSocket",
+    "definitionEng": "Protocol providing full-duplex communication over a single TCP connection.",
+    "definitionUkr": "WebSocket: протокол двостороннього зв'язку"
+  },
+  {
+    "term": "Port",
+    "definitionEng": "A communication endpoint in computer networking.",
+    "definitionUkr": "Порт"
+  },
+  {
+    "term": "Man-in-the-Middle",
+    "definitionEng": "An attacker intercepts communication between two parties.",
+    "definitionUkr": "Атака посередника"
+  },
+  {
+    "term": "UDP",
+    "definitionEng": "User Datagram Protocol: connectionless, less reliable protocol.",
+    "definitionUkr": "UDP: протокол дейтаграм користувача"
+  },
+  {
+    "term": "SSL",
+    "definitionEng": "Secure Sockets Layer: protocol for securing internet communication.",
+    "definitionUkr": "SSL: протокол безпечного з'єднання"
+  },
+  {
+    "term": "Subnet",
+    "definitionEng": "A segmented piece of a larger network.",
+    "definitionUkr": "Підмережа"
+  },
+  {
+    "term": "CIDR",
+    "definitionEng": "Classless Inter-Domain Routing: method for allocating IP addresses.",
+    "definitionUkr": "CIDR: безкласова маршрутизація"
+  },
+  {
+    "term": "Bridge",
+    "definitionEng": "A device that connects two LANs.",
+    "definitionUkr": "Міст"
+  },
+  {
+    "term": "Man-in-the-Middle",
+    "definitionEng": "An attacker intercepts communication between two parties.",
+    "definitionUkr": "Атака посередника"
+  },
+  {
+    "term": "DHCP",
+    "definitionEng": "Protocol that automatically assigns IP addresses to devices.",
+    "definitionUkr": "DHCP: протокол автоматичного присвоєння IP"
+  },
+  {
+    "term": "TCP",
+    "definitionEng": "Transmission Control Protocol: reliable, connection-oriented protocol.",
+    "definitionUkr": "TCP: протокол керування передачею"
+  },
+  {
+    "term": "ICMP",
+    "definitionEng": "Internet Control Message Protocol: used for error messages and diagnostics.",
+    "definitionUkr": "ICMP: протокол керування інтернетом"
+  },
+  {
+    "term": "Firewall",
+    "definitionEng": "A network security system that monitors and controls incoming and outgoing network traffic.",
+    "definitionUkr": "Мережевий екран"
+  },
+  {
+    "term": "802.11",
+    "definitionEng": "Family of standards for wireless networking.",
+    "definitionUkr": "802.11: стандарти Wi-Fi"
+  },
+  {
+    "term": "DNS",
+    "definitionEng": "Domain Name System: the phonebook of the internet.",
+    "definitionUkr": "DNS: система доменних імен"
+  },
+  {
+    "term": "Subnet",
+    "definitionEng": "A segmented piece of a larger network.",
+    "definitionUkr": "Підмережа"
+  },
+  {
+    "term": "DNS",
+    "definitionEng": "Domain Name System: the phonebook of the internet.",
+    "definitionUkr": "DNS: система доменних імен"
+  },
+  {
+    "term": "CIDR",
+    "definitionEng": "Classless Inter-Domain Routing: method for allocating IP addresses.",
+    "definitionUkr": "CIDR: безкласова маршрутизація"
+  },
+  {
+    "term": "OSI model",
+    "definitionEng": "A conceptual framework used to understand network interactions.",
+    "definitionUkr": "Модель OSI"
+  },
+  {
+    "term": "FTP",
+    "definitionEng": "File Transfer Protocol: transfers files over the Internet.",
+    "definitionUkr": "FTP: протокол передачі файлів"
+  },
+  {
+    "term": "WebSocket",
+    "definitionEng": "Protocol providing full-duplex communication over a single TCP connection.",
+    "definitionUkr": "WebSocket: протокол двостороннього зв'язку"
+  },
+  {
+    "term": "Traceroute",
+    "definitionEng": "A network diagnostic tool for tracking the path to a destination.",
+    "definitionUkr": "Traceroute: трасування маршруту"
+  },
+  {
+    "term": "802.11",
+    "definitionEng": "Family of standards for wireless networking.",
+    "definitionUkr": "802.11: стандарти Wi-Fi"
+  },
+  {
+    "term": "Ping",
+    "definitionEng": "A network utility to test reachability of a host.",
+    "definitionUkr": "Ping: перевірка доступності вузла"
+  },
+  {
+    "term": "SSID",
+    "definitionEng": "Service Set Identifier: name of a wireless network.",
+    "definitionUkr": "SSID: ідентифікатор мережі Wi-Fi"
+  },
+  {
+    "term": "Latency",
+    "definitionEng": "Delay before a transfer of data begins following an instruction.",
+    "definitionUkr": "Затримка"
+  },
+  {
+    "term": "Latency",
+    "definitionEng": "Delay before a transfer of data begins following an instruction.",
+    "definitionUkr": "Затримка"
+  },
+  {
+    "term": "OSI model",
+    "definitionEng": "A conceptual framework used to understand network interactions.",
+    "definitionUkr": "Модель OSI"
+  },
+  {
+    "term": "HTTPS",
+    "definitionEng": "HTTP Secure: encrypted HTTP.",
+    "definitionUkr": "HTTPS: захищений протокол передачі"
+  },
+  {
+    "term": "LAN",
+    "definitionEng": "Local Area Network: network in a small geographic area.",
+    "definitionUkr": "LAN: локальна мережа"
+  },
+  {
+    "term": "Ethernet",
+    "definitionEng": "A widely used LAN technology.",
+    "definitionUkr": "Ethernet: технологія локальної мережі"
+  },
+  {
+    "term": "WebSocket",
+    "definitionEng": "Protocol providing full-duplex communication over a single TCP connection.",
+    "definitionUkr": "WebSocket: протокол двостороннього зв'язку"
+  },
+  {
+    "term": "TCP",
+    "definitionEng": "Transmission Control Protocol: reliable, connection-oriented protocol.",
+    "definitionUkr": "TCP: протокол керування передачею"
+  },
+  {
+    "term": "HTTPS",
+    "definitionEng": "HTTP Secure: encrypted HTTP.",
+    "definitionUkr": "HTTPS: захищений протокол передачі"
+  },
+  {
+    "term": "HTTP",
+    "definitionEng": "Hypertext Transfer Protocol: foundation of data communication for the web.",
+    "definitionUkr": "HTTP"
+  },
+  {
+    "term": "802.11",
+    "definitionEng": "Family of standards for wireless networking.",
+    "definitionUkr": "802.11: стандарти Wi-Fi"
+  },
+  {
+    "term": "MAC address",
+    "definitionEng": "A hardware address that uniquely identifies each device on a network.",
+    "definitionUkr": "MAC-адреса"
+  },
+  {
+    "term": "SSID",
+    "definitionEng": "Service Set Identifier: name of a wireless network.",
+    "definitionUkr": "SSID: ідентифікатор мережі Wi-Fi"
+  },
+  {
+    "term": "IPv4",
+    "definitionEng": "Internet Protocol version 4: uses 32-bit addresses.",
+    "definitionUkr": "IPv4"
+  },
+  {
+    "term": "Router",
+    "definitionEng": "A device that forwards data packets between computer networks.",
+    "definitionUkr": "Маршрутизатор"
+  },
+  {
+    "term": "WebSocket",
+    "definitionEng": "Protocol providing full-duplex communication over a single TCP connection.",
+    "definitionUkr": "WebSocket: протокол двостороннього зв'язку"
+  },
+  {
+    "term": "OSI model",
+    "definitionEng": "A conceptual framework used to understand network interactions.",
+    "definitionUkr": "Модель OSI"
+  },
+  {
+    "term": "LAN",
+    "definitionEng": "Local Area Network: network in a small geographic area.",
+    "definitionUkr": "LAN: локальна мережа"
+  },
+  {
+    "term": "IPv6",
+    "definitionEng": "Internet Protocol version 6: uses 128-bit addresses.",
+    "definitionUkr": "IPv6"
+  },
+  {
+    "term": "Ethernet",
+    "definitionEng": "A widely used LAN technology.",
+    "definitionUkr": "Ethernet: технологія локальної мережі"
+  },
+  {
+    "term": "Subnet",
+    "definitionEng": "A segmented piece of a larger network.",
+    "definitionUkr": "Підмережа"
+  },
+  {
+    "term": "SSL",
+    "definitionEng": "Secure Sockets Layer: protocol for securing internet communication.",
+    "definitionUkr": "SSL: протокол безпечного з'єднання"
+  },
+  {
+    "term": "Gateway",
+    "definitionEng": "A node that serves as an access point to another network.",
+    "definitionUkr": "Шлюз"
+  },
+  {
+    "term": "Ethernet",
+    "definitionEng": "A widely used LAN technology.",
+    "definitionUkr": "Ethernet: технологія локальної мережі"
+  },
+  {
+    "term": "FTP",
+    "definitionEng": "File Transfer Protocol: transfers files over the Internet.",
+    "definitionUkr": "FTP: протокол передачі файлів"
+  },
+  {
+    "term": "Latency",
+    "definitionEng": "Delay before a transfer of data begins following an instruction.",
+    "definitionUkr": "Затримка"
+  },
+  {
+    "term": "Bridge",
+    "definitionEng": "A device that connects two LANs.",
+    "definitionUkr": "Міст"
+  },
+  {
+    "term": "Netmask",
+    "definitionEng": "Defines range of IP addresses in a subnet.",
+    "definitionUkr": "Маска підмережі"
+  },
+  {
+    "term": "IPv4",
+    "definitionEng": "Internet Protocol version 4: uses 32-bit addresses.",
+    "definitionUkr": "IPv4"
+  },
+  {
+    "term": "Bandwidth",
+    "definitionEng": "The maximum rate of data transfer across a network.",
+    "definitionUkr": "Пропускна здатність"
+  },
+  {
+    "term": "UDP",
+    "definitionEng": "User Datagram Protocol: connectionless, less reliable protocol.",
+    "definitionUkr": "UDP: протокол дейтаграм користувача"
+  },
+  {
+    "term": "OSI model",
+    "definitionEng": "A conceptual framework used to understand network interactions.",
+    "definitionUkr": "Модель OSI"
+  },
+  {
+    "term": "HTTP",
+    "definitionEng": "Hypertext Transfer Protocol: foundation of data communication for the web.",
+    "definitionUkr": "HTTP"
+  },
+  {
+    "term": "IPv6",
+    "definitionEng": "Internet Protocol version 6: uses 128-bit addresses.",
+    "definitionUkr": "IPv6"
+  },
+  {
+    "term": "IPv4",
+    "definitionEng": "Internet Protocol version 4: uses 32-bit addresses.",
+    "definitionUkr": "IPv4"
+  },
+  {
+    "term": "WebSocket",
+    "definitionEng": "Protocol providing full-duplex communication over a single TCP connection.",
+    "definitionUkr": "WebSocket: протокол двостороннього зв'язку"
+  },
+  {
+    "term": "DHCP",
+    "definitionEng": "Protocol that automatically assigns IP addresses to devices.",
+    "definitionUkr": "DHCP: протокол автоматичного присвоєння IP"
+  },
+  {
+    "term": "TCP",
+    "definitionEng": "Transmission Control Protocol: reliable, connection-oriented protocol.",
+    "definitionUkr": "TCP: протокол керування передачею"
+  },
+  {
+    "term": "HTTPS",
+    "definitionEng": "HTTP Secure: encrypted HTTP.",
+    "definitionUkr": "HTTPS: захищений протокол передачі"
+  },
+  {
+    "term": "IPv4",
+    "definitionEng": "Internet Protocol version 4: uses 32-bit addresses.",
+    "definitionUkr": "IPv4"
+  },
+  {
+    "term": "IPv6",
+    "definitionEng": "Internet Protocol version 6: uses 128-bit addresses.",
+    "definitionUkr": "IPv6"
+  },
+  {
+    "term": "802.11",
+    "definitionEng": "Family of standards for wireless networking.",
+    "definitionUkr": "802.11: стандарти Wi-Fi"
+  },
+  {
+    "term": "Router",
+    "definitionEng": "A device that forwards data packets between computer networks.",
+    "definitionUkr": "Маршрутизатор"
+  },
+  {
+    "term": "SSL",
+    "definitionEng": "Secure Sockets Layer: protocol for securing internet communication.",
+    "definitionUkr": "SSL: протокол безпечного з'єднання"
+  },
+  {
+    "term": "UDP",
+    "definitionEng": "User Datagram Protocol: connectionless, less reliable protocol.",
+    "definitionUkr": "UDP: протокол дейтаграм користувача"
+  },
+  {
+    "term": "DoS Attack",
+    "definitionEng": "Denial-of-Service: attack intended to shut down a machine or network.",
+    "definitionUkr": "Атака типу Відмова в обслуговуванні"
+  },
+  {
+    "term": "Firewall",
+    "definitionEng": "A network security system that monitors and controls incoming and outgoing network traffic.",
+    "definitionUkr": "Мережевий екран"
+  },
+  {
+    "term": "Proxy",
+    "definitionEng": "An intermediary server separating end users from the websites they browse.",
+    "definitionUkr": "Проксі-сервер"
+  },
+  {
+    "term": "ICMP",
+    "definitionEng": "Internet Control Message Protocol: used for error messages and diagnostics.",
+    "definitionUkr": "ICMP: протокол керування інтернетом"
+  },
+  {
+    "term": "CIDR",
+    "definitionEng": "Classless Inter-Domain Routing: method for allocating IP addresses.",
+    "definitionUkr": "CIDR: безкласова маршрутизація"
+  },
+  {
+    "term": "Man-in-the-Middle",
+    "definitionEng": "An attacker intercepts communication between two parties.",
+    "definitionUkr": "Атака посередника"
+  },
+  {
+    "term": "Firewall",
+    "definitionEng": "A network security system that monitors and controls incoming and outgoing network traffic.",
+    "definitionUkr": "Мережевий екран"
+  },
+  {
+    "term": "Netmask",
+    "definitionEng": "Defines range of IP addresses in a subnet.",
+    "definitionUkr": "Маска підмережі"
+  },
+  {
+    "term": "DoS Attack",
+    "definitionEng": "Denial-of-Service: attack intended to shut down a machine or network.",
+    "definitionUkr": "Атака типу Відмова в обслуговуванні"
+  },
+  {
+    "term": "BGP",
+    "definitionEng": "Border Gateway Protocol: manages how packets are routed across the internet.",
+    "definitionUkr": "BGP: протокол граничного шлюзу"
+  },
+  {
+    "term": "HTTP",
+    "definitionEng": "Hypertext Transfer Protocol: foundation of data communication for the web.",
+    "definitionUkr": "HTTP"
+  },
+  {
+    "term": "UDP",
+    "definitionEng": "User Datagram Protocol: connectionless, less reliable protocol.",
+    "definitionUkr": "UDP: протокол дейтаграм користувача"
+  },
+  {
+    "term": "DNS",
+    "definitionEng": "Domain Name System: the phonebook of the internet.",
+    "definitionUkr": "DNS: система доменних імен"
+  },
+  {
+    "term": "TCP",
+    "definitionEng": "Transmission Control Protocol: reliable, connection-oriented protocol.",
+    "definitionUkr": "TCP: протокол керування передачею"
+  },
+  {
+    "term": "UDP",
+    "definitionEng": "User Datagram Protocol: connectionless, less reliable protocol.",
+    "definitionUkr": "UDP: протокол дейтаграм користувача"
+  },
+  {
+    "term": "Packet",
+    "definitionEng": "A formatted unit of data carried by a packet-switched network.",
+    "definitionUkr": "Пакет"
+  },
+  {
+    "term": "HTTPS",
+    "definitionEng": "HTTP Secure: encrypted HTTP.",
+    "definitionUkr": "HTTPS: захищений протокол передачі"
+  },
+  {
+    "term": "Router",
+    "definitionEng": "A device that forwards data packets between computer networks.",
+    "definitionUkr": "Маршрутизатор"
+  },
+  {
+    "term": "Load Balancer",
+    "definitionEng": "Distributes network or application traffic across servers.",
+    "definitionUkr": "Балансувальник навантаження"
+  },
+  {
+    "term": "FTP",
+    "definitionEng": "File Transfer Protocol: transfers files over the Internet.",
+    "definitionUkr": "FTP: протокол передачі файлів"
+  },
+  {
+    "term": "VPN",
+    "definitionEng": "Virtual Private Network: extends a private network across a public network.",
+    "definitionUkr": "VPN: віртуальна приватна мережа"
+  },
+  {
+    "term": "Load Balancer",
+    "definitionEng": "Distributes network or application traffic across servers.",
+    "definitionUkr": "Балансувальник навантаження"
+  },
+  {
+    "term": "Packet",
+    "definitionEng": "A formatted unit of data carried by a packet-switched network.",
+    "definitionUkr": "Пакет"
+  },
+  {
+    "term": "WebSocket",
+    "definitionEng": "Protocol providing full-duplex communication over a single TCP connection.",
+    "definitionUkr": "WebSocket: протокол двостороннього зв'язку"
+  },
+  {
+    "term": "Ping",
+    "definitionEng": "A network utility to test reachability of a host.",
+    "definitionUkr": "Ping: перевірка доступності вузла"
+  },
+  {
+    "term": "Bridge",
+    "definitionEng": "A device that connects two LANs.",
+    "definitionUkr": "Міст"
+  },
+  {
+    "term": "Bridge",
+    "definitionEng": "A device that connects two LANs.",
+    "definitionUkr": "Міст"
+  },
+  {
+    "term": "Proxy",
+    "definitionEng": "An intermediary server separating end users from the websites they browse.",
+    "definitionUkr": "Проксі-сервер"
+  },
+  {
+    "term": "SSL",
+    "definitionEng": "Secure Sockets Layer: protocol for securing internet communication.",
+    "definitionUkr": "SSL: протокол безпечного з'єднання"
+  },
+  {
+    "term": "CIDR",
+    "definitionEng": "Classless Inter-Domain Routing: method for allocating IP addresses.",
+    "definitionUkr": "CIDR: безкласова маршрутизація"
+  },
+  {
+    "term": "Proxy",
+    "definitionEng": "An intermediary server separating end users from the websites they browse.",
+    "definitionUkr": "Проксі-сервер"
+  },
+  {
+    "term": "Netmask",
+    "definitionEng": "Defines range of IP addresses in a subnet.",
+    "definitionUkr": "Маска підмережі"
+  },
+  {
+    "term": "SSID",
+    "definitionEng": "Service Set Identifier: name of a wireless network.",
+    "definitionUkr": "SSID: ідентифікатор мережі Wi-Fi"
+  },
+  {
+    "term": "OSI model",
+    "definitionEng": "A conceptual framework used to understand network interactions.",
+    "definitionUkr": "Модель OSI"
+  },
+  {
+    "term": "WAN",
+    "definitionEng": "Wide Area Network: spans a large geographic area.",
+    "definitionUkr": "WAN: глобальна мережа"
+  },
+  {
+    "term": "Man-in-the-Middle",
+    "definitionEng": "An attacker intercepts communication between two parties.",
+    "definitionUkr": "Атака посередника"
+  },
+  {
+    "term": "Load Balancer",
+    "definitionEng": "Distributes network or application traffic across servers.",
+    "definitionUkr": "Балансувальник навантаження"
+  },
+  {
+    "term": "Bandwidth",
+    "definitionEng": "The maximum rate of data transfer across a network.",
+    "definitionUkr": "Пропускна здатність"
+  },
+  {
+    "term": "HTTP",
+    "definitionEng": "Hypertext Transfer Protocol: foundation of data communication for the web.",
+    "definitionUkr": "HTTP"
+  },
+  {
+    "term": "CIDR",
+    "definitionEng": "Classless Inter-Domain Routing: method for allocating IP addresses.",
+    "definitionUkr": "CIDR: безкласова маршрутизація"
+  },
+  {
+    "term": "Subnet",
+    "definitionEng": "A segmented piece of a larger network.",
+    "definitionUkr": "Підмережа"
+  },
+  {
+    "term": "Socket",
+    "definitionEng": "One endpoint of a two-way communication link.",
+    "definitionUkr": "Сокет"
+  },
+  {
+    "term": "HTTPS",
+    "definitionEng": "HTTP Secure: encrypted HTTP.",
+    "definitionUkr": "HTTPS: захищений протокол передачі"
+  },
+  {
+    "term": "WAN",
+    "definitionEng": "Wide Area Network: spans a large geographic area.",
+    "definitionUkr": "WAN: глобальна мережа"
+  },
+  {
+    "term": "NAT",
+    "definitionEng": "Network Address Translation: modifies network address information.",
+    "definitionUkr": "NAT: трансляція мережевих адрес"
+  },
+  {
+    "term": "Load Balancer",
+    "definitionEng": "Distributes network or application traffic across servers.",
+    "definitionUkr": "Балансувальник навантаження"
+  },
+  {
+    "term": "Bandwidth",
+    "definitionEng": "The maximum rate of data transfer across a network.",
+    "definitionUkr": "Пропускна здатність"
+  },
+  {
+    "term": "Ping",
+    "definitionEng": "A network utility to test reachability of a host.",
+    "definitionUkr": "Ping: перевірка доступності вузла"
+  }
+]

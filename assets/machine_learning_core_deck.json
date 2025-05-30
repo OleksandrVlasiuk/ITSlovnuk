@@ -1,0 +1,302 @@
+[
+  {
+    "term": "supervised learning",
+    "definitionEng": "Machine learning where the model learns from labeled data",
+    "definitionUkr": "контрольоване навчання — машинне навчання, де модель навчається на розмічених даних"
+  },
+  {
+    "term": "unsupervised learning",
+    "definitionEng": "Modeling technique using unlabeled data to find patterns",
+    "definitionUkr": "неконтрольоване навчання — виявлення закономірностей у нерозмічених даних"
+  },
+  {
+    "term": "overfitting",
+    "definitionEng": "Model performs well on training data but poorly on unseen data",
+    "definitionUkr": "перенавчання — модель добре працює на тренувальних даних, але погано — на нових"
+  },
+  {
+    "term": "underfitting",
+    "definitionEng": "Model is too simple and fails to capture data patterns",
+    "definitionUkr": "недонавчання — модель занадто проста і не вловлює закономірності"
+  },
+  {
+    "term": "bias",
+    "definitionEng": "Error from incorrect assumptions in the learning algorithm",
+    "definitionUkr": "упередженість — помилка через неправильні припущення в алгоритмі"
+  },
+  {
+    "term": "variance",
+    "definitionEng": "Error from model sensitivity to small fluctuations in the training set",
+    "definitionUkr": "дисперсія — чутливість моделі до змін у тренувальних даних"
+  },
+  {
+    "term": "cross-validation",
+    "definitionEng": "A method to assess how the results of a model will generalize",
+    "definitionUkr": "перехресна перевірка — метод оцінки узагальнення моделі"
+  },
+  {
+    "term": "confusion matrix",
+    "definitionEng": "A table showing true vs. predicted classifications",
+    "definitionUkr": "матриця неточностей — таблиця зіставлення реальних і передбачених класів"
+  },
+  {
+    "term": "precision",
+    "definitionEng": "The proportion of correct positive predictions",
+    "definitionUkr": "точність — частка правильних позитивних передбачень"
+  },
+  {
+    "term": "recall",
+    "definitionEng": "The proportion of actual positives correctly identified",
+    "definitionUkr": "повнота — частка вірно виявлених позитивних прикладів"
+  },
+  {
+    "term": "F1-score",
+    "definitionEng": "Harmonic mean of precision and recall",
+    "definitionUkr": "F1-метрика — гармонічне середнє точності й повноти"
+  },
+  {
+    "term": "gradient descent",
+    "definitionEng": "Optimization algorithm for minimizing loss",
+    "definitionUkr": "градієнтний спуск — алгоритм оптимізації для мінімізації втрат"
+  },
+  {
+    "term": "loss function",
+    "definitionEng": "Function measuring the error between prediction and actual",
+    "definitionUkr": "функція втрат — визначає різницю між передбаченням і реальною метою"
+  },
+  {
+    "term": "neural network",
+    "definitionEng": "Model inspired by the human brain for pattern recognition",
+    "definitionUkr": "нейронна мережа — модель, натхненна людським мозком для розпізнавання"
+  },
+  {
+    "term": "feature",
+    "definitionEng": "An individual measurable property of the data",
+    "definitionUkr": "ознака — вимірювана характеристика даних"
+  },
+  {
+    "term": "label",
+    "definitionEng": "The target variable in supervised learning",
+    "definitionUkr": "мітка — цільова змінна в контрольованому навчанні"
+  },
+  {
+    "term": "clustering",
+    "definitionEng": "Grouping similar data points without labels",
+    "definitionUkr": "кластеризація — групування схожих обʼєктів без міток"
+  },
+  {
+    "term": "dimensionality reduction",
+    "definitionEng": "Reducing the number of input variables",
+    "definitionUkr": "зменшення розмірності — скорочення кількості вхідних змінних"
+  },
+  {
+    "term": "principal component analysis",
+    "definitionEng": "Technique for dimensionality reduction using variance",
+    "definitionUkr": "метод головних компонент — метод зменшення розмірності за допомогою дисперсії"
+  },
+  {
+    "term": "regularization",
+    "definitionEng": "Technique to prevent overfitting by penalizing complexity",
+    "definitionUkr": "регуляризація — запобігання переобученню шляхом штрафу за складність моделі"
+  },
+  {
+    "term": "model",
+    "definitionEng": "An abstraction learned from data to make predictions",
+    "definitionUkr": "модель — абстракція, навчена на даних для здійснення передбачень"
+  },
+  {
+    "term": "training data",
+    "definitionEng": "Data used to fit the model",
+    "definitionUkr": "тренувальні дані — використовуються для навчання моделі"
+  },
+  {
+    "term": "test data",
+    "definitionEng": "Unseen data used to evaluate the model",
+    "definitionUkr": "тестові дані — невідомі моделі дані для оцінки"
+  },
+  {
+    "term": "validation set",
+    "definitionEng": "Data used to tune model parameters",
+    "definitionUkr": "валідаційний набір — використовується для налаштування параметрів"
+  },
+  {
+    "term": "ensemble learning",
+    "definitionEng": "Combining multiple models to improve performance",
+    "definitionUkr": "ансамблеве навчання — поєднання кількох моделей для підвищення точності"
+  },
+  {
+    "term": "bagging",
+    "definitionEng": "Training multiple models on different subsets of data",
+    "definitionUkr": "беггінг — навчання моделей на різних підмножинах даних"
+  },
+  {
+    "term": "boosting",
+    "definitionEng": "Sequentially improving weak models by focusing on errors",
+    "definitionUkr": "бустинг — послідовне покращення слабких моделей через увагу до помилок"
+  },
+  {
+    "term": "decision tree",
+    "definitionEng": "Model that splits data into branches to predict outcomes",
+    "definitionUkr": "дерево рішень — модель, що розділяє дані для передбачень"
+  },
+  {
+    "term": "random forest",
+    "definitionEng": "Ensemble of decision trees for classification or regression",
+    "definitionUkr": "випадковий ліс — ансамбль дерев рішень для класифікації чи регресії"
+  },
+  {
+    "term": "support vector machine",
+    "definitionEng": "Algorithm that finds the optimal boundary between classes",
+    "definitionUkr": "машина опорних векторів — знаходить оптимальну межу між класами"
+  },
+  {
+    "term": "k-nearest neighbors",
+    "definitionEng": "Predicts using the closest training examples",
+    "definitionUkr": "метод k найближчих сусідів — передбачає за найближчими прикладами"
+  },
+  {
+    "term": "naive Bayes",
+    "definitionEng": "Probabilistic classifier based on Bayes' theorem",
+    "definitionUkr": "наївний баєсів класифікатор — імовірнісна модель на основі теореми Байєса"
+  },
+  {
+    "term": "deep learning",
+    "definitionEng": "Machine learning using many layers of neural networks",
+    "definitionUkr": "глибоке навчання — використання багатьох шарів нейромереж"
+  },
+  {
+    "term": "activation function",
+    "definitionEng": "Function applied to neurons in a neural network",
+    "definitionUkr": "функція активації — використовується в нейронах мережі"
+  },
+  {
+    "term": "epoch",
+    "definitionEng": "One full pass through the training dataset",
+    "definitionUkr": "епоха — повний прохід по тренувальних даних"
+  },
+  {
+    "term": "batch size",
+    "definitionEng": "Number of training examples used per update",
+    "definitionUkr": "розмір пакета — кількість прикладів для одного оновлення"
+  },
+  {
+    "term": "dropout",
+    "definitionEng": "Regularization by randomly ignoring neurons during training",
+    "definitionUkr": "дропаут — регуляризація шляхом випадкового ігнорування нейронів"
+  },
+  {
+    "term": "learning rate",
+    "definitionEng": "Controls how much the model updates at each step",
+    "definitionUkr": "швидкість навчання — визначає розмір кроку оновлення моделі"
+  },
+  {
+    "term": "hyperparameter",
+    "definitionEng": "Parameter set before learning that influences the model",
+    "definitionUkr": "гіперпараметр — налаштовується до початку навчання і впливає на модель"
+  },
+  {
+    "term": "reLU",
+    "definitionEng": "Activation function: returns input if positive, else 0",
+    "definitionUkr": "ReLU — функція активації, що повертає позитивне значення або нуль"
+  },
+  {
+    "term": "feature engineering",
+    "definitionEng": "The process of creating new input features from raw data",
+    "definitionUkr": "інженерія ознак — створення нових ознак на основі сирих даних"
+  },
+  {
+    "term": "feature selection",
+    "definitionEng": "Choosing the most relevant features for model training",
+    "definitionUkr": "відбір ознак — вибір найбільш релевантних ознак для навчання моделі"
+  },
+  {
+    "term": "cross-validation",
+    "definitionEng": "Technique to evaluate model performance on multiple data splits",
+    "definitionUkr": "крос-валідація — оцінювання моделі на кількох розділеннях даних"
+  },
+  {
+    "term": "confusion matrix",
+    "definitionEng": "A table showing predicted vs actual values",
+    "definitionUkr": "матриця помилок — таблиця передбачених і фактичних значень"
+  },
+  {
+    "term": "precision",
+    "definitionEng": "Ratio of correctly predicted positives to all predicted positives",
+    "definitionUkr": "точність — частка правильних позитивних передбачень серед усіх позитивних"
+  },
+  {
+    "term": "recall",
+    "definitionEng": "Ratio of correctly predicted positives to all actual positives",
+    "definitionUkr": "повнота — частка правильних позитивних передбачень серед усіх справжніх"
+  },
+  {
+    "term": "F1 score",
+    "definitionEng": "Harmonic mean of precision and recall",
+    "definitionUkr": "оцінка F1 — гармонійне середнє між точністю і повнотою"
+  },
+  {
+    "term": "ROC curve",
+    "definitionEng": "Graph showing true positive vs false positive rates",
+    "definitionUkr": "крива ROC — графік справжніх проти хибнопозитивних передбачень"
+  },
+  {
+    "term": "unsupervised learning",
+    "definitionEng": "Learning patterns from unlabeled data",
+    "definitionUkr": "навчання без учителя — виявлення шаблонів без розмічених даних"
+  },
+  {
+    "term": "clustering",
+    "definitionEng": "Grouping similar data points together",
+    "definitionUkr": "кластеризація — обʼєднання схожих обʼєктів у групи"
+  },
+  {
+    "term": "dimensionality reduction",
+    "definitionEng": "Reducing the number of features while retaining information",
+    "definitionUkr": "зменшення розмірності — зменшення кількості ознак з збереженням інформації"
+  },
+  {
+    "term": "PCA",
+    "definitionEng": "Principal Component Analysis, a method for dimensionality reduction",
+    "definitionUkr": "PCA — метод головних компонент для зменшення розмірності"
+  },
+  {
+    "term": "data drift",
+    "definitionEng": "Change in data distribution over time",
+    "definitionUkr": "зсув даних — зміна розподілу даних з часом"
+  },
+  {
+    "term": "model drift",
+    "definitionEng": "Performance degradation of a model over time",
+    "definitionUkr": "зсув моделі — поступове погіршення точності моделі з часом"
+  },
+  {
+    "term": "model deployment",
+    "definitionEng": "Making a trained model available for real-time use",
+    "definitionUkr": "розгортання моделі — надання змоги використовувати модель у реальному часі"
+  },
+  {
+    "term": "A/B testing",
+    "definitionEng": "Testing two versions of a model to compare performance",
+    "definitionUkr": "A/B тестування — порівняння двох версій моделі для оцінки ефективності"
+  },
+  {
+    "term": "monitoring",
+    "definitionEng": "Tracking model performance in production",
+    "definitionUkr": "моніторинг — відстеження роботи моделі у виробничому середовищі"
+  },
+  {
+    "term": "exploitation vs exploration",
+    "definitionEng": "Balance between using known best options vs trying new ones",
+    "definitionUkr": "експлуатація проти дослідження — баланс між перевіреним і новим"
+  },
+  {
+    "term": "cold start",
+    "definitionEng": "Problem of making predictions when little data is available",
+    "definitionUkr": "ефект холодного старту — складність передбачень при нестачі даних"
+  },
+  {
+    "term": "transfer learning",
+    "definitionEng": "Using a pretrained model on a new but related task",
+    "definitionUkr": "трансферне навчання — використання попередньо навченої моделі для нової задачі"
+  }
+]

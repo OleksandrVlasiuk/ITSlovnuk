@@ -1,0 +1,197 @@
+[
+  {
+    "term": "Test Case",
+    "definitionEng": "A set of conditions to determine if a feature works correctly",
+    "definitionUkr": "тест-кейс — набір умов для перевірки правильності роботи функціоналу"
+  },
+  {
+    "term": "Bug",
+    "definitionEng": "An error in software that causes incorrect results",
+    "definitionUkr": "баг — помилка в ПЗ, яка спричиняє некоректну поведінку"
+  },
+  {
+    "term": "Regression Testing",
+    "definitionEng": "Testing to confirm that new changes didn’t break existing functionality",
+    "definitionUkr": "регресійне тестування — перевірка, що нові зміни не зламали старий функціонал"
+  },
+  {
+    "term": "Unit Test",
+    "definitionEng": "Test for individual functions or methods",
+    "definitionUkr": "юнiт-тест — тест окремої функції або методу"
+  },
+  {
+    "term": "Integration Test",
+    "definitionEng": "Test to verify interaction between components",
+    "definitionUkr": "інтеграційне тестування — перевірка взаємодії між компонентами"
+  },
+  {
+    "term": "Test Plan",
+    "definitionEng": "A document describing the scope and approach of testing",
+    "definitionUkr": "план тестування — документ з описом обсягу та методів тестування"
+  },
+  {
+    "term": "Smoke Testing",
+    "definitionEng": "Basic checks to see if the app runs at all",
+    "definitionUkr": "smoke-тестування — базова перевірка працездатності застосунку"
+  },
+  {
+    "term": "Sanity Testing",
+    "definitionEng": "Quick checks to ensure specific functionality works after changes",
+    "definitionUkr": "sanity-тестування — швидка перевірка функціоналу після змін"
+  },
+  {
+    "term": "Acceptance Testing",
+    "definitionEng": "Confirming the system meets business requirements",
+    "definitionUkr": "приймальне тестування — перевірка відповідності системи бізнес-вимогам"
+  },
+  {
+    "term": "Test Coverage",
+    "definitionEng": "Measurement of how much code is tested",
+    "definitionUkr": "покриття тестами — міра того, скільки коду перевірено тестами"
+  },
+  {
+    "term": "Defect",
+    "definitionEng": "Deviation from expected behavior",
+    "definitionUkr": "дефект — відхилення від очікуваної поведінки"
+  },
+  {
+    "term": "Test Environment",
+    "definitionEng": "Setup of software and hardware for testing",
+    "definitionUkr": "тестове середовище — налаштування ПЗ і заліза для тестування"
+  },
+  {
+    "term": "Test Data",
+    "definitionEng": "Data used as input during testing",
+    "definitionUkr": "тестові дані — дані, що подаються на вхід під час тестування"
+  },
+  {
+    "term": "Exploratory Testing",
+    "definitionEng": "Simultaneous learning, test design, and execution",
+    "definitionUkr": "дослідницьке тестування — поєднання вивчення, проектування й запуску тестів"
+  },
+  {
+    "term": "Automated Testing",
+    "definitionEng": "Tests executed by scripts instead of humans",
+    "definitionUkr": "автоматизоване тестування — запуск тестів за допомогою скриптів"
+  },
+  {
+    "term": "Test Automation Framework",
+    "definitionEng": "A set of tools and guidelines to create and run automated tests",
+    "definitionUkr": "фреймворк автоматизації тестування — набір інструментів і правил для створення й запуску автотестів"
+  },
+  {
+    "term": "Mock",
+    "definitionEng": "A fake object that mimics real behavior for testing",
+    "definitionUkr": "мок — підставний обʼєкт, що імітує справжню поведінку для тестування"
+  },
+  {
+    "term": "Staging Environment",
+    "definitionEng": "A replica of production for final testing before release",
+    "definitionUkr": "стейджинг — середовище, що імітує продакшн для фінального тестування"
+  },
+  {
+    "term": "Load Testing",
+    "definitionEng": "Testing how the system performs under high usage",
+    "definitionUkr": "тестування навантаження — перевірка продуктивності системи при великому навантаженні"
+  },
+  {
+    "term": "Stress Testing",
+    "definitionEng": "Testing system behavior under extreme conditions",
+    "definitionUkr": "стрес-тестування — перевірка системи в умовах надмірного навантаження"
+  },
+  {
+    "term": "Performance Testing",
+    "definitionEng": "Measuring responsiveness and stability under various loads",
+    "definitionUkr": "тестування продуктивності — вимірювання швидкодії й стабільності системи"
+  },
+  {
+    "term": "Security Testing",
+    "definitionEng": "Checking the system for vulnerabilities and data protection",
+    "definitionUkr": "тестування безпеки — перевірка системи на вразливості й захист даних"
+  },
+  {
+    "term": "Usability Testing",
+    "definitionEng": "Evaluating how user-friendly the interface is",
+    "definitionUkr": "тестування зручності — оцінка зручності інтерфейсу для користувача"
+  },
+  {
+    "term": "False Positive",
+    "definitionEng": "A test result that incorrectly indicates a failure",
+    "definitionUkr": "помилкове спрацьовування — тест повідомляє про помилку, якої немає"
+  },
+  {
+    "term": "False Negative",
+    "definitionEng": "A test result that misses a real failure",
+    "definitionUkr": "помилкове непомічення — тест не виявляє існуючу помилку"
+  },
+  {
+    "term": "Test Coverage",
+    "definitionEng": "A metric showing how much code is tested",
+    "definitionUkr": "покриття тестами — показник того, яку частину коду охоплюють тести"
+  },
+  {
+    "term": "Acceptance Criteria",
+    "definitionEng": "Conditions a software product must meet to be accepted",
+    "definitionUkr": "критерії приймання — умови, які має виконати продукт, щоб його прийняли"
+  },
+  {
+    "term": "Exploratory Testing",
+    "definitionEng": "Unscripted testing to discover issues dynamically",
+    "definitionUkr": "дослідницьке тестування — вільне тестування для виявлення несподіваних помилок"
+  },
+  {
+    "term": "Test Environment",
+    "definitionEng": "Setup including hardware and software for executing tests",
+    "definitionUkr": "тестове середовище — налаштування ПЗ та обладнання для виконання тестів"
+  },
+  {
+    "term": "Load Testing",
+    "definitionEng": "Testing how a system behaves under expected load",
+    "definitionUkr": "тестування навантаження — перевірка, як система працює при типовому навантаженні"
+  },
+  {
+    "term": "Stress Testing",
+    "definitionEng": "Testing system behavior under extreme conditions",
+    "definitionUkr": "стрес-тестування — перевірка роботи системи за екстремального навантаження"
+  },
+  {
+    "term": "Usability Testing",
+    "definitionEng": "Evaluating how user-friendly a system is",
+    "definitionUkr": "тестування зручності — оцінка легкості користування системою"
+  },
+  {
+    "term": "Test Automation",
+    "definitionEng": "Using tools to run tests automatically",
+    "definitionUkr": "автоматизація тестування — використання інструментів для автоматичного запуску тестів"
+  },
+  {
+    "term": "Test Suite",
+    "definitionEng": "A collection of test cases grouped for execution",
+    "definitionUkr": "набір тестів — група тестових випадків для запуску"
+  },
+  {
+    "term": "Test Oracle",
+    "definitionEng": "The source of expected results for comparison",
+    "definitionUkr": "тестовий оракул — джерело очікуваного результату для порівняння"
+  },
+  {
+    "term": "Severity",
+    "definitionEng": "Impact level of a defect on the system",
+    "definitionUkr": "суворість — рівень впливу дефекту на систему"
+  },
+  {
+    "term": "Priority",
+    "definitionEng": "The urgency to fix a defect",
+    "definitionUkr": "пріоритет — терміновість виправлення дефекту"
+  },
+  {
+    "term": "Boundary Value Testing",
+    "definitionEng": "Testing at the edges of input ranges",
+    "definitionUkr": "тестування граничних значень — перевірка на межі допустимих даних"
+  },
+  {
+    "term": "Equivalence Partitioning",
+    "definitionEng": "Dividing input data into valid and invalid partitions for testing",
+    "definitionUkr": "еквівалентне розбиття — розділення вхідних даних на класи для перевірки"
+  }
+]

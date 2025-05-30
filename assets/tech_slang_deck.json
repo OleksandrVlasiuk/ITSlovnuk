@@ -1,0 +1,152 @@
+[
+  {
+    "term": "LGTM",
+    "definitionEng": "Looks Good To Me",
+    "definitionUkr": "виглядає добре для мене (все ок)"
+  },
+  {
+    "term": "TBD",
+    "definitionEng": "To Be Determined",
+    "definitionUkr": "буде уточнено"
+  },
+  {
+    "term": "ASAP",
+    "definitionEng": "As Soon As Possible",
+    "definitionUkr": "якнайшвидше"
+  },
+  {
+    "term": "IMO",
+    "definitionEng": "In My Opinion",
+    "definitionUkr": "на мою думку"
+  },
+  {
+    "term": "FYI",
+    "definitionEng": "For Your Information",
+    "definitionUkr": "до твого відома"
+  },
+  {
+    "term": "bug",
+    "definitionEng": "An error in the code",
+    "definitionUkr": "баг — помилка в коді"
+  },
+  {
+    "term": "repo",
+    "definitionEng": "Short for repository (e.g., Git repo)",
+    "definitionUkr": "репо — скорочено від сховища (Git)"
+  },
+  {
+    "term": "merge",
+    "definitionEng": "Combining code from two branches",
+    "definitionUkr": "злиття — обʼєднання гілок коду"
+  },
+  {
+    "term": "rollback",
+    "definitionEng": "Reverting changes to a previous state",
+    "definitionUkr": "відкат — повернення до попереднього стану"
+  },
+  {
+    "term": "hotfix",
+    "definitionEng": "A quick patch for a critical issue",
+    "definitionUkr": "гарячий фікс — швидке виправлення критичної проблеми"
+  },
+  {
+    "term": "PR",
+    "definitionEng": "Pull Request",
+    "definitionUkr": "PR — запит на злиття коду в репозиторії"
+  },
+  {
+    "term": "CI",
+    "definitionEng": "Continuous Integration",
+    "definitionUkr": "CI — безперервна інтеграція"
+  },
+  {
+    "term": "CD",
+    "definitionEng": "Continuous Delivery/Deployment",
+    "definitionUkr": "CD — безперервна доставка або розгортання"
+  },
+  {
+    "term": "WIP",
+    "definitionEng": "Work In Progress",
+    "definitionUkr": "WIP — робота в процесі"
+  },
+  {
+    "term": "ETA",
+    "definitionEng": "Estimated Time of Arrival",
+    "definitionUkr": "ETA — приблизний час завершення/прибуття"
+  },
+  {
+    "term": "dev",
+    "definitionEng": "Developer / Development",
+    "definitionUkr": "дев — розробник або розробка"
+  },
+  {
+    "term": "prod",
+    "definitionEng": "Production environment",
+    "definitionUkr": "прод — робоче середовище"
+  },
+  {
+    "term": "staging",
+    "definitionEng": "Pre-production testing environment",
+    "definitionUkr": "стейджинг — тестове середовище перед продом"
+  },
+  {
+    "term": "QA",
+    "definitionEng": "Quality Assurance",
+    "definitionUkr": "QA — забезпечення якості"
+  },
+  {
+    "term": "ping",
+    "definitionEng": "Send a signal or ask for response (also in chat)",
+    "definitionUkr": "пінг — звернутись або надіслати сигнал"
+  },
+  {
+    "term": "AFK",
+    "definitionEng": "Away From Keyboard",
+    "definitionUkr": "AFK — відійшов від клавіатури"
+  },
+  {
+    "term": "brb",
+    "definitionEng": "Be Right Back",
+    "definitionUkr": "brb — зараз повернусь"
+  },
+  {
+    "term": "devops",
+    "definitionEng": "Development and Operations collaboration",
+    "definitionUkr": "devops — співпраця між розробкою та адмініструванням"
+  },
+  {
+    "term": "stack",
+    "definitionEng": "Set of technologies used in development",
+    "definitionUkr": "стек — набір технологій у проєкті"
+  },
+  {
+    "term": "SDK",
+    "definitionEng": "Software Development Kit",
+    "definitionUkr": "SDK — набір інструментів для розробки"
+  },
+  {
+    "term": "API",
+    "definitionEng": "Application Programming Interface",
+    "definitionUkr": "API — інтерфейс прикладного програмування"
+  },
+  {
+    "term": "RTFM",
+    "definitionEng": "Read The Freaking Manual",
+    "definitionUkr": "RTFM — прочитай, будь ласка, документацію"
+  },
+  {
+    "term": "n00b",
+    "definitionEng": "A beginner, often used playfully",
+    "definitionUkr": "нуб — новачок"
+  },
+  {
+    "term": "lgtm",
+    "definitionEng": "Looks Good To Me",
+    "definitionUkr": "все виглядає добре"
+  },
+  {
+    "term": "scrum",
+    "definitionEng": "An Agile framework for managing work",
+    "definitionUkr": "scrum — гнучкий підхід до організації командної роботи"
+  }
+]

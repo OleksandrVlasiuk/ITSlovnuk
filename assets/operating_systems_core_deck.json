@@ -1,0 +1,252 @@
+[
+  {
+"term": "process",
+"definitionEng": "An instance of a program in execution",
+"definitionUkr": "процес — екземпляр програми, що виконується"
+},
+{
+"term": "thread",
+"definitionEng": "A lightweight process that shares memory with others",
+"definitionUkr": "потік — легковаговий процес, що розділяє памʼять з іншими"
+},
+{
+"term": "context switch",
+"definitionEng": "The act of saving and loading process state",
+"definitionUkr": "перемикання контексту — збереження та завантаження стану процесу"
+},
+{
+"term": "scheduler",
+"definitionEng": "Component that decides which process runs next",
+"definitionUkr": "планувальник — компонент, що вирішує, який процес виконувати далі"
+},
+{
+"term": "deadlock",
+"definitionEng": "A situation where processes wait forever for resources",
+"definitionUkr": "взаємоблокування — ситуація, коли процеси нескінченно чекають ресурси"
+},
+{
+"term": "mutex",
+"definitionEng": "A mechanism to ensure only one thread accesses a resource",
+"definitionUkr": "мʼютекс — механізм, що гарантує виключний доступ потоку до ресурсу"
+},
+{
+"term": "semaphore",
+"definitionEng": "A signaling mechanism for synchronizing threads",
+"definitionUkr": "семафор — механізм сигналізації для синхронізації потоків"
+},
+{
+"term": "kernel",
+"definitionEng": "Core part of the OS managing resources and hardware",
+"definitionUkr": "ядро — центральна частина ОС, що керує ресурсами та обладнанням"
+},
+{
+"term": "virtual memory",
+"definitionEng": "Abstraction that gives processes the illusion of large memory",
+"definitionUkr": "віртуальна памʼять — абстракція, яка створює ілюзію великої памʼяті"
+},
+{
+"term": "paging",
+"definitionEng": "Memory management technique using fixed-size blocks",
+"definitionUkr": "пейджинг — метод керування памʼяттю з використанням фіксованих сторінок"
+},
+{
+"term": "file system",
+"definitionEng": "Structure for storing and organizing files",
+"definitionUkr": "файлова система — структура для зберігання та організації файлів"
+},
+{
+"term": "interrupt",
+"definitionEng": "Signal that causes the CPU to stop its current task",
+"definitionUkr": "переривання — сигнал, що змушує процесор змінити хід виконання"
+},
+{
+"term": "system call",
+"definitionEng": "Interface to request services from the OS",
+"definitionUkr": "системний виклик — інтерфейс для запиту послуг ОС"
+},
+{
+"term": "IO-bound process",
+"definitionEng": "A process that spends more time on input/output than CPU",
+"definitionUkr": "процес, обмежений введенням/виведенням — витрачає більше часу на I/O, ніж на CPU"
+},
+{
+"term": "CPU-bound process",
+"definitionEng": "A process that requires intensive CPU usage",
+"definitionUkr": "процес, обмежений CPU — вимагає великої обчислювальної потужності"
+},
+{
+"term": "cache",
+"definitionEng": "Fast storage to speed up data access",
+"definitionUkr": "кеш — швидке сховище для прискорення доступу до даних"
+},
+{
+"term": "bootloader",
+"definitionEng": "Program that loads the OS into memory on startup",
+"definitionUkr": "завантажувач — програма, яка підвантажує ОС у памʼять при запуску"
+},
+{
+"term": "init process",
+"definitionEng": "The first process started by the kernel",
+"definitionUkr": "процес init — перший процес, який запускає ядро"
+},
+{
+"term": "daemon",
+"definitionEng": "A background process that provides services",
+"definitionUkr": "демон — фоновий процес, який надає сервіси"
+},
+{
+"term": "swap space",
+"definitionEng": "Disk area used as overflow for RAM",
+"definitionUkr": "своп-простір — область диску для тимчасового зберігання з RAM"
+},
+  {
+    "term": "inode",
+    "definitionEng": "Data structure storing metadata about a file",
+    "definitionUkr": "inode — структура даних, що містить метадані файлу"
+  },
+  {
+    "term": "buffer",
+    "definitionEng": "Memory used for temporary data storage",
+    "definitionUkr": "буфер — памʼять для тимчасового зберігання даних"
+  },
+  {
+    "term": "DMA",
+    "definitionEng": "Direct Memory Access without CPU involvement",
+    "definitionUkr": "DMA — прямий доступ до памʼяті без участі CPU"
+  },
+  {
+    "term": "race condition",
+    "definitionEng": "Unpredictable behavior due to unsynchronized access",
+    "definitionUkr": "гонка — непередбачувана поведінка через несинхронізований доступ"
+  },
+  {
+    "term": "atomic operation",
+    "definitionEng": "An operation that completes entirely or not at all",
+    "definitionUkr": "атомарна операція — виконується повністю або не виконується зовсім"
+  },
+  {
+    "term": "file descriptor",
+    "definitionEng": "Integer that identifies an open file",
+    "definitionUkr": "дескриптор файлу — число, що ідентифікує відкритий файл"
+  },
+  {
+    "term": "mount",
+    "definitionEng": "To attach a file system to a directory tree",
+    "definitionUkr": "монтувати — приєднати файлову систему до дерева каталогів"
+  },
+  {
+    "term": "umask",
+    "definitionEng": "Default permission mask for new files",
+    "definitionUkr": "umask — маска прав доступу за замовчуванням для нових файлів"
+  },
+  {
+    "term": "ACL",
+    "definitionEng": "Access Control List specifying permissions",
+    "definitionUkr": "ACL — список керування доступом з правами"
+  },
+  {
+    "term": "virtualization",
+    "definitionEng": "Technique to run multiple OSes on one machine",
+    "definitionUkr": "віртуалізація — запуск кількох ОС на одному компʼютері"
+  },
+  {
+    "term": "hypervisor",
+    "definitionEng": "Software to manage virtual machines",
+    "definitionUkr": "гіпервізор — програма для керування віртуальними машинами"
+  },
+  {
+    "term": "guest OS",
+    "definitionEng": "Operating system running inside a VM",
+    "definitionUkr": "гостьова ОС — ОС, що працює всередині віртуальної машини"
+  },
+  {
+    "term": "host OS",
+    "definitionEng": "Operating system that runs VMs",
+    "definitionUkr": "хостова ОС — ОС, яка запускає віртуальні машини"
+  },
+  {
+    "term": "snapshot",
+    "definitionEng": "Saved state of a system at a given time",
+    "definitionUkr": "знімок — збережений стан системи в певний момент часу"
+  },
+  {
+    "term": "container",
+    "definitionEng": "Lightweight isolated environment for applications",
+    "definitionUkr": "контейнер — легковагове ізольоване середовище для додатків"
+  },
+  {
+    "term": "cgroup",
+    "definitionEng": "Linux feature to control resource usage",
+    "definitionUkr": "cgroup — механізм контролю використання ресурсів у Linux"
+  },
+  {
+    "term": "namespace",
+    "definitionEng": "Feature for isolating system resources",
+    "definitionUkr": "неймспейс — механізм ізоляції системних ресурсів"
+  },
+  {
+    "term": "load average",
+    "definitionEng": "Average number of running and waiting processes",
+    "definitionUkr": "середнє навантаження — кількість активних і очікуючих процесів"
+  },
+  {
+    "term": "uptime",
+    "definitionEng": "How long the system has been running",
+    "definitionUkr": "аптайм — тривалість роботи системи без перезавантаження"
+  },
+  {
+    "term": "log rotation",
+    "definitionEng": "Managing log file size and archiving",
+    "definitionUkr": "ротація логів — управління розміром та архівуванням логів"
+  },
+  {
+    "term": "syslog",
+    "definitionEng": "Standard system logging service",
+    "definitionUkr": "syslog — стандартна служба журналювання системи"
+  },
+  {
+    "term": "cron",
+    "definitionEng": "Tool for scheduling repetitive tasks",
+    "definitionUkr": "cron — інструмент для планування повторюваних завдань"
+  },
+  {
+    "term": "initramfs",
+    "definitionEng": "Initial RAM file system loaded at boot",
+    "definitionUkr": "initramfs — початкова файлова система у RAM під час завантаження"
+  },
+  {
+    "term": "runlevel",
+    "definitionEng": "State of init system defining system behavior",
+    "definitionUkr": "рівень запуску — стан системи з певними службами"
+  },
+  {
+    "term": "SELinux",
+    "definitionEng": "Security extension for Linux systems",
+    "definitionUkr": "SELinux — модуль розширеної безпеки для Linux"
+  },
+  {
+    "term": "kernel panic",
+    "definitionEng": "Critical OS failure requiring restart",
+    "definitionUkr": "паніка ядра — критична помилка ОС, що потребує перезапуску"
+  },
+  {
+    "term": "syscall table",
+    "definitionEng": "List of all system calls provided by the OS",
+    "definitionUkr": "таблиця системних викликів — перелік функцій ОС"
+  },
+  {
+    "term": "preemptive multitasking",
+    "definitionEng": "OS can interrupt tasks to switch context",
+    "definitionUkr": "преемптивна багатозадачність — ОС сама перемикає завдання"
+  },
+  {
+    "term": "cooperative multitasking",
+    "definitionEng": "Tasks must yield control voluntarily",
+    "definitionUkr": "кооперативна багатозадачність — завдання самі передають управління"
+  },
+  {
+    "term": "watchdog",
+    "definitionEng": "Timer that detects and recovers system hangs",
+    "definitionUkr": "вотчдог — таймер для виявлення зависань і перезапуску"
+  }
+]
