@@ -14,13 +14,29 @@ class CardsListPage extends StatefulWidget {
 class _CardsListPageState extends State<CardsListPage> {
   List<DocumentSnapshot> cards = [];
   bool isLoading = true;
+  bool isCopied = false;
   bool updated = false;
 
   @override
   void initState() {
     super.initState();
-    _loadCards();
+    _checkIfCopied().then((_) => _loadCards());
   }
+
+  Future<void> _checkIfCopied() async {
+    final deckDoc = await FirebaseFirestore.instance
+        .collection('decks')
+        .doc(widget.deckId)
+        .get();
+
+    final data = deckDoc.data();
+    if (data != null && data.containsKey('copiedFrom') && data['copiedFrom'] != null) {
+      setState(() {
+        isCopied = true;
+      });
+    }
+  }
+
 
   Future<void> _loadCards() async {
     final snapshot = await FirebaseFirestore.instance
@@ -42,6 +58,7 @@ class _CardsListPageState extends State<CardsListPage> {
   }
 
   Future<void> _editCard(DocumentSnapshot card) async {
+    if (isCopied) return;
     final termController = TextEditingController(text: card['term']);
     final defUkrController = TextEditingController(text: card['definitionUkr'] ?? '');
 
@@ -90,6 +107,7 @@ class _CardsListPageState extends State<CardsListPage> {
   }
 
   Future<void> _deleteCard(String cardId) async {
+    if (isCopied) return;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -171,8 +189,12 @@ class _CardsListPageState extends State<CardsListPage> {
               final isNew = _isNew(card['createdAt']);
 
               return GestureDetector(
-                onTap: () => _editCard(card),
-                onLongPress: () => _deleteCard(card.id),
+                onTap: () {
+                  if (!isCopied) _editCard(card);
+                },
+                onLongPress: () {
+                  if (!isCopied) _deleteCard(card.id);
+                },
                 child: Stack(
                   children: [
                     Container(

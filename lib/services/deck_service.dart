@@ -192,16 +192,34 @@ class DeckService {
   /// Видалити колоду з усіма картками
   Future<void> deleteDeckWithCards(String deckId) async {
     final deckRef = _firestore.collection('decks').doc(deckId);
-    final cardsRef = deckRef.collection('cards');
+    final deckSnap = await deckRef.get();
 
-    final batch = _firestore.batch();
+    if (!deckSnap.exists) return;
+
+    final data = deckSnap.data()!;
+    final String? publicDeckId = data['publicDeckId'];
+
+    // 1. Видалити всі картки
+    final cardsRef = deckRef.collection('cards');
     final cardsSnapshot = await cardsRef.get();
 
+    final batch = _firestore.batch();
     for (final doc in cardsSnapshot.docs) {
       batch.delete(doc.reference);
     }
 
+    // 2. Якщо це копія публічної колоди — зменшити лічильник
+    if (publicDeckId != null && publicDeckId.isNotEmpty) {
+      final publicRef = _firestore.collection('published_decks').doc(publicDeckId);
+      batch.update(publicRef, {
+        'addedCount': FieldValue.increment(-1),
+      });
+    }
+
+    // 3. Видалити саму колоду
     batch.delete(deckRef);
+
+    // 4. Виконати батч
     await batch.commit();
   }
 
@@ -328,24 +346,37 @@ class DeckService {
   Future<void> addPublicDeckToUser(String publishedDeckId, String userId) async {
     final firestore = FirebaseFirestore.instance;
 
+    // 1. Отримати дані публічної колоди
     final pubSnap = await firestore.collection('published_decks').doc(publishedDeckId).get();
     if (!pubSnap.exists) throw Exception('Колода не знайдена');
 
     final pubData = pubSnap.data()!;
+
+    // 2. Отримати нікнейм та роль автора
+    final originalUserSnap = await firestore.collection('users').doc(pubData['userId']).get();
+    final originalData = originalUserSnap.data() ?? {};
+    final isAdmin = originalData['role'] == 'admin';
+    final nickname = isAdmin ? 'ITСловник' : (originalData['nickname'] ?? 'Автор');
+
+    // 3. Створити нову копію у користувача
     final newDeckRef = await firestore.collection('decks').add({
       'title': pubData['title'],
       'userId': userId,
-      'sessionCardCount': pubData['sessionCardCount'] ?? 0,
+      'sessionCardCount': pubData['sessionCardCount'] ?? 5,
       'createdAt': FieldValue.serverTimestamp(),
+      'lastViewed': FieldValue.serverTimestamp(),
       'isArchived': false,
       'isPublic': false,
       'copiedFrom': publishedDeckId,
       'copiedAt': FieldValue.serverTimestamp(),
-      'cardCount': 0, // приватна не використовується для перегляду
+      'originalUserNickname': nickname,
+      'cardCount': 0,
+      'publicDeckId': publishedDeckId,
     });
 
     await newDeckRef.update({'id': newDeckRef.id});
 
+    // 4. Копіюємо картки
     final cardsSnap = await firestore
         .collection('published_decks')
         .doc(publishedDeckId)
@@ -356,12 +387,21 @@ class DeckService {
       await newDeckRef.collection('cards').doc(doc.id).set(doc.data());
     }
 
-    // ✅ Оновлюємо лише в опублікованій колоді
+    // 5. Оновити кількість карток
+    await firestore.collection('decks').doc(newDeckRef.id).update({
+      'cardCount': cardsSnap.docs.length,
+    });
+
+    // 6. Оновити кількість завантажень у публічній
     await firestore.collection('published_decks').doc(publishedDeckId).update({
       'addedCount': FieldValue.increment(1),
-      'cardCount': cardsSnap.docs.length
+      'cardCount': cardsSnap.docs.length,
     });
+
+    await DeckService().updateCardCount(newDeckRef.id);
   }
+
+
 
   /// Скинути статус rejected: повернути approved або null в залежності від того,
   /// чи вже є опублікована версія цієї колоди

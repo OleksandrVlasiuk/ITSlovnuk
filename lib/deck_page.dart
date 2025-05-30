@@ -215,7 +215,17 @@ class _DeckPageState extends State<DeckPage> {
                       ),
                     ),
                   ),
-                  const Spacer(),
+                ],
+              ),
+
+
+
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text("Картки", style: TextStyle(color: Colors.white70, fontSize: 18)),
                   GestureDetector(
                     onTap: () async {
                       final result = await Navigator.push(
@@ -247,10 +257,8 @@ class _DeckPageState extends State<DeckPage> {
                   ),
                 ],
               ),
-
-              const SizedBox(height: 20),
-              const Text("Картки", style: TextStyle(color: Colors.white70, fontSize: 18)),
               const SizedBox(height: 12),
+
               SizedBox(
                 height: 150,
                 child: cards.isEmpty
@@ -362,7 +370,7 @@ class _DeckPageState extends State<DeckPage> {
                               ),
                               ElevatedButton(
                                 onPressed: () => Navigator.pop(context, true),
-                                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                style: ElevatedButton.styleFrom(backgroundColor: Colors.red,foregroundColor: Colors.white,),
                                 child: const Text("Видалити"),
                               ),
                             ],

@@ -1,3 +1,4 @@
+//public_deck_preview_page.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -19,9 +20,9 @@ class _PublicDeckPreviewPageState extends State<PublicDeckPreviewPage> {
   bool isLoading = true;
   bool alreadyAdded = false;
   DateTime? copiedAt;
+  String authorDisplayName = 'невідомо';
 
   String title = '';
-  String authorEmail = 'невідомо';
   int cardCount = 0;
   int addedCount = 0;
   DateTime? publishedAt;
@@ -34,7 +35,10 @@ class _PublicDeckPreviewPageState extends State<PublicDeckPreviewPage> {
   }
 
   Future<void> _loadDeck() async {
-    final doc = await FirebaseFirestore.instance.collection('published_decks').doc(widget.deckId).get();
+    final doc = await FirebaseFirestore.instance
+        .collection('published_decks')
+        .doc(widget.deckId)
+        .get();
     if (!doc.exists) return;
 
     final data = doc.data()!;
@@ -44,9 +48,22 @@ class _PublicDeckPreviewPageState extends State<PublicDeckPreviewPage> {
     publishedAt = (data['publishedAt'] as Timestamp).toDate();
     final authorId = data['userId'] ?? '';
 
-    final authorDoc = await FirebaseFirestore.instance.collection('users').doc(authorId).get();
-    authorEmail = authorDoc.data()?['email'] ?? 'невідомо';
+    // Отримати дані автора
+    final authorDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(authorId)
+        .get();
+    final authorData = authorDoc.data();
+    final role = authorData?['role'] ?? 'user';
+    final nickname = authorData?['nickname']?.toString().trim();
 
+    authorDisplayName = role == 'admin'
+        ? 'ITСловник'
+        : (nickname != null && nickname.isNotEmpty
+        ? nickname
+        : authorData?['email'] ?? 'невідомо');
+
+    // Перевірка, чи вже додана ця колода
     final userDecks = await DeckService().getUserDecks(userId);
     Deck? existingDeck;
     for (final deck in userDecks) {
@@ -59,6 +76,7 @@ class _PublicDeckPreviewPageState extends State<PublicDeckPreviewPage> {
     alreadyAdded = existingDeck != null;
     copiedAt = existingDeck?.copiedAt;
 
+    // Завантаження карток
     final cardsSnapshot = await FirebaseFirestore.instance
         .collection('published_decks')
         .doc(widget.deckId)
@@ -77,6 +95,7 @@ class _PublicDeckPreviewPageState extends State<PublicDeckPreviewPage> {
 
     setState(() => isLoading = false);
   }
+
 
   String _formatDate(DateTime? date) {
     if (date == null) return '—';
@@ -101,7 +120,7 @@ class _PublicDeckPreviewPageState extends State<PublicDeckPreviewPage> {
           children: [
             Text(title, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            Text('Автор: $authorEmail', style: const TextStyle(color: Colors.white70, fontSize: 16)),
+            Text('Автор: $authorDisplayName', style: const TextStyle(color: Colors.white70, fontSize: 16)),
             Text(
               'Карток: $cardCount | Додали: $addedCount',
               style: const TextStyle(color: Colors.white70, fontSize: 16),

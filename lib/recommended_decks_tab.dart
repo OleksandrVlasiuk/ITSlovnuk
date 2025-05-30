@@ -1,10 +1,10 @@
+//recommended_decks_tab.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:it_english_app_clean/plan_filters.dart';
 import 'package:it_english_app_clean/public_deck_preview_page.dart';
 import '../services/deck_service.dart';
-
 
 class RecommendedDecksTab extends StatefulWidget {
   const RecommendedDecksTab({super.key});
@@ -18,6 +18,7 @@ class _RecommendedDecksTabState extends State<RecommendedDecksTab> {
   List<String> userCopiedDeckIds = [];
 
   String titleSearch = '';
+  String nicknameSearch = ''; // додано!
   String sort = 'published_desc';
   DateTime? startDate;
   DateTime? endDate;
@@ -45,12 +46,12 @@ class _RecommendedDecksTabState extends State<RecommendedDecksTab> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
           child: PlanFilters(
             titleSearch: titleSearch,
-            emailSearch: '',
+            nicknameSearch: nicknameSearch, // передаємо
             sort: sort,
             isRecommendedTab: true,
             onChanged: ({
               String? title,
-              String? email,
+              String? nickname,
               String? sort,
               DateTime? startDate,
               DateTime? endDate,
@@ -59,6 +60,7 @@ class _RecommendedDecksTabState extends State<RecommendedDecksTab> {
             }) {
               setState(() {
                 titleSearch = title ?? titleSearch;
+                nicknameSearch = nickname ?? nicknameSearch;
                 this.sort = sort ?? this.sort;
                 this.startDate = startDate;
                 this.endDate = endDate;
@@ -81,15 +83,17 @@ class _RecommendedDecksTabState extends State<RecommendedDecksTab> {
 
               List<QueryDocumentSnapshot> docs = snapshot.data!.docs;
 
+              // 🔽 Відбираємо тільки рекомендовані або permanent
               docs = docs.where((doc) {
                 final data = doc.data() as Map<String, dynamic>;
                 return data['publicationMode'] == 'permanent' || (data['isRecommended'] == true);
               }).toList();
 
+              // 🔽 Початкова фільтрація
               docs = docs.where((doc) {
                 final data = doc.data() as Map<String, dynamic>;
                 final title = (data['title'] ?? '').toString().toLowerCase();
-                final cardCount = data['sessionCardCount'] ?? 0;
+                final cardCount = data['cardCount'] ?? 0;
                 final publishedAt = (data['publishedAt'] as Timestamp).toDate();
 
                 if (!title.contains(titleSearch.toLowerCase())) return false;
@@ -101,14 +105,14 @@ class _RecommendedDecksTabState extends State<RecommendedDecksTab> {
                 return true;
               }).toList();
 
+              // 🔽 Сортування
               docs.sort((a, b) {
                 final dataA = a.data() as Map<String, dynamic>;
                 final dataB = b.data() as Map<String, dynamic>;
 
                 switch (sort) {
                   case 'added_desc':
-                    return ((dataB['addedCount'] ?? 0) as int)
-                        .compareTo((dataA['addedCount'] ?? 0) as int);
+                    return ((dataB['addedCount'] ?? 0) as int).compareTo((dataA['addedCount'] ?? 0) as int);
                   case 'title_asc':
                     return (dataA['title'] ?? '').toString().compareTo((dataB['title'] ?? '').toString());
                   case 'published_desc':
@@ -124,53 +128,92 @@ class _RecommendedDecksTabState extends State<RecommendedDecksTab> {
                 );
               }
 
-              return ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: docs.length,
-                itemBuilder: (context, index) {
-                  final doc = docs[index];
-                  final data = doc.data() as Map<String, dynamic>;
-                  final publishedDeckId = doc.id;
+              return FutureBuilder<Map<String, Map<String, String>>>(
+                future: _fetchUserInfos(docs),
+                builder: (context, userSnapshot) {
+                  if (!userSnapshot.hasData) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-                  final title = data['title'] ?? 'Без назви';
-                  final cardCount = data['cardCount'] ?? 0;
-                  final addedCount = data['addedCount'] ?? 0;
-                  final publishedAt = (data['publishedAt'] as Timestamp).toDate();
-                  final alreadyAdded = userCopiedDeckIds.contains(publishedDeckId);
+                  final userInfos = userSnapshot.data!;
+                  final nicknameQuery = nicknameSearch.trim().toLowerCase();
 
-                  return Card(
-                    color: const Color(0xFF333333),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    child: ListTile(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => PublicDeckPreviewPage(deckId: publishedDeckId),
-                          ),
-                        );
-                      },
-                      title: Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                      subtitle: Text(
-                        'Карток: $cardCount  |  Додали: $addedCount\nОпубліковано: ${_formatDate(publishedAt)}',
-                        style: const TextStyle(color: Colors.white70),
-                      ),
-                      trailing: alreadyAdded
-                          ? const Icon(Icons.check, color: Colors.green)
-                          : IconButton(
-                        icon: const Icon(Icons.add_circle_outline, color: Colors.white),
-                        onPressed: () async {
-                          await DeckService().addPublicDeckToUser(publishedDeckId, userId);
-                          await _loadUserDecks();
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Колода додана до ваших')),
+                  final regularDecks = <QueryDocumentSnapshot>[];
+                  final adminDecks = <QueryDocumentSnapshot>[];
+
+                  for (final doc in docs) {
+                    final data = doc.data() as Map<String, dynamic>;
+                    final userId = data['userId'];
+                    final info = userInfos[userId] ?? {'role': 'user', 'nickname': ''};
+                    final isAdmin = info['role'] == 'admin';
+                    final nickname = info['nickname'] ?? '';
+
+                    if (isAdmin) {
+                      if (nicknameQuery.isEmpty || 'itсловник'.contains(nicknameQuery)) {
+                        adminDecks.add(doc);
+                      }
+                    } else {
+                      if (nicknameQuery.isEmpty || nickname.contains(nicknameQuery)) {
+                        regularDecks.add(doc);
+                      }
+                    }
+                  }
+
+                  final filteredDocs = [...regularDecks, ...adminDecks];
+
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: filteredDocs.length,
+                    itemBuilder: (context, index) {
+                      final doc = filteredDocs[index];
+                      final data = doc.data() as Map<String, dynamic>;
+                      final publishedDeckId = doc.id;
+
+                      final title = data['title'] ?? 'Без назви';
+                      final cardCount = data['cardCount'] ?? 0;
+                      final addedCount = data['addedCount'] ?? 0;
+                      final publishedAt = (data['publishedAt'] as Timestamp).toDate();
+                      final authorId = data['userId'];
+                      final info = userInfos[authorId] ?? {'role': 'user', 'nickname': 'невідомо'};
+                      final isAdmin = info['role'] == 'admin';
+                      final displayName = isAdmin ? 'ITСловник' : info['nickname'] ?? 'невідомо';
+                      final alreadyAdded = userCopiedDeckIds.contains(publishedDeckId);
+
+                      return Card(
+                        color: const Color(0xFF333333),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        child: ListTile(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => PublicDeckPreviewPage(deckId: publishedDeckId),
+                              ),
                             );
-                          }
-                        },
-                      ),
-                    ),
+                          },
+                          title: Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                          subtitle: Text(
+                            'Автор: $displayName\nКарток: $cardCount  |  Додали: $addedCount\nОпубліковано: ${_formatDate(publishedAt)}',
+                            style: const TextStyle(color: Colors.white70),
+                          ),
+                          trailing: alreadyAdded
+                              ? const Icon(Icons.check, color: Colors.green)
+                              : IconButton(
+                            icon: const Icon(Icons.add_circle_outline, color: Colors.white),
+                            onPressed: () async {
+                              await DeckService().addPublicDeckToUser(publishedDeckId, userId);
+                              await _loadUserDecks();
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Колода додана до ваших')),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      );
+                    },
                   );
                 },
               );
@@ -179,6 +222,24 @@ class _RecommendedDecksTabState extends State<RecommendedDecksTab> {
         ),
       ],
     );
+  }
+
+  Future<Map<String, Map<String, String>>> _fetchUserInfos(List<QueryDocumentSnapshot> docs) async {
+    final userIds = docs.map((doc) => (doc.data() as Map<String, dynamic>)['userId'] as String).toSet();
+    final snapshots = await Future.wait(
+      userIds.map((id) => FirebaseFirestore.instance.collection('users').doc(id).get()),
+    );
+
+    final result = <String, Map<String, String>>{};
+    for (final snap in snapshots) {
+      if (!snap.exists || snap.data() == null) continue;
+      final data = snap.data()!;
+      final role = (data['role'] ?? 'user').toString();
+      final nickname = (data['nickname'] ?? '').toString().trim().toLowerCase();
+      result[snap.id] = {'role': role, 'nickname': nickname};
+    }
+
+    return result;
   }
 
   String _formatDate(DateTime date) {

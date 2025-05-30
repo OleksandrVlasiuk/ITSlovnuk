@@ -1,54 +1,64 @@
-//plan_filters.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class PlanFilters extends StatefulWidget {
+class UserDecksFilters extends StatefulWidget {
   final String titleSearch;
-  final String nicknameSearch;
-  final String sort;
-  final bool isRecommendedTab;
+  final String deckTypeFilter; // all, own, copied
+  final String sortDirection; // asc, desc
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final int? minCards;
+  final int? maxCards;
+
   final void Function({
   String? title,
-  String? nickname,
-  String? sort,
+  String? deckType,
+  String? sortDirection,
   DateTime? startDate,
   DateTime? endDate,
   int? minCards,
   int? maxCards,
   }) onChanged;
 
-  const PlanFilters({
+  const UserDecksFilters({
     super.key,
     required this.titleSearch,
-    required this.nicknameSearch,
-    required this.sort,
-    required this.isRecommendedTab,
+    required this.deckTypeFilter,
+    required this.sortDirection,
+    required this.startDate,
+    required this.endDate,
+    required this.minCards,
+    required this.maxCards,
     required this.onChanged,
   });
 
   @override
-  State<PlanFilters> createState() => _PlanFiltersState();
+  State<UserDecksFilters> createState() => _UserDecksFiltersState();
 }
 
-class _PlanFiltersState extends State<PlanFilters> {
+class _UserDecksFiltersState extends State<UserDecksFilters> {
   final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _nicknameController = TextEditingController();
   final TextEditingController _minCardsController = TextEditingController();
   final TextEditingController _maxCardsController = TextEditingController();
 
+  String? _deckType;
+  String? _sort;
   DateTime? _startDate;
   DateTime? _endDate;
-  String? _sort;
   bool _isExpanded = false;
 
   @override
   void initState() {
     super.initState();
     _titleController.text = widget.titleSearch;
-    _nicknameController.text = widget.nicknameSearch;
-    _sort = widget.sort;
+    _deckType = widget.deckTypeFilter;
+    _sort = widget.sortDirection;
+    _startDate = widget.startDate;
+    _endDate = widget.endDate;
+    _minCardsController.text = widget.minCards?.toString() ?? '';
+    _maxCardsController.text = widget.maxCards?.toString() ?? '';
+
     _titleController.addListener(_onChanged);
-    _nicknameController.addListener(_onChanged);
     _minCardsController.addListener(_onChanged);
     _maxCardsController.addListener(_onChanged);
   }
@@ -56,18 +66,16 @@ class _PlanFiltersState extends State<PlanFilters> {
   @override
   void dispose() {
     _titleController.dispose();
-    _nicknameController.dispose();
     _minCardsController.dispose();
     _maxCardsController.dispose();
     super.dispose();
   }
 
   void _onChanged() {
-    if (!mounted) return;
     widget.onChanged(
-      title: _titleController.text,
-      nickname: _nicknameController.text,
-      sort: _sort,
+      title: _titleController.text.trim(),
+      deckType: _deckType,
+      sortDirection: _sort,
       startDate: _startDate,
       endDate: _endDate,
       minCards: int.tryParse(_minCardsController.text),
@@ -77,11 +85,11 @@ class _PlanFiltersState extends State<PlanFilters> {
 
   void _resetFilters() {
     _titleController.clear();
-    _nicknameController.clear();
     _minCardsController.clear();
     _maxCardsController.clear();
     setState(() {
-      _sort = 'published_desc';
+      _deckType = 'all';
+      _sort = 'desc';
       _startDate = null;
       _endDate = null;
     });
@@ -174,23 +182,43 @@ class _PlanFiltersState extends State<PlanFilters> {
               ),
               const SizedBox(width: 6),
               Expanded(
-                flex: 4,
-                child: TextField(
-                  controller: _nicknameController,
+                flex: 3,
+                child: DropdownButtonFormField<String>(
+                  value: _deckType,
+                  dropdownColor: Colors.grey[900],
+                  iconEnabledColor: Colors.white,
                   style: const TextStyle(color: Colors.white, fontSize: 12),
-                  decoration: InputDecoration(
-                    isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                    hintText: 'Пошук по нікнейму...',
-                    hintStyle: const TextStyle(color: Colors.white54, fontSize: 12),
-                    filled: true,
-                    fillColor: Colors.black26,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
+                  isExpanded: true,
+                  decoration: _dropdownDecoration(),
+                  items: const [
+                    DropdownMenuItem(value: 'all', child: Text('Усі')),
+                    DropdownMenuItem(value: 'own', child: Text('Власні')),
+                    DropdownMenuItem(value: 'copied', child: Text('Додані')),
+                  ],
+                  onChanged: (val) {
+                    setState(() => _deckType = val);
+                    _onChanged();
+                  },
+                ),
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                flex: 3,
+                child: DropdownButtonFormField<String>(
+                  value: _sort,
+                  dropdownColor: Colors.grey[900],
+                  iconEnabledColor: Colors.white,
+                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                  isExpanded: true,
+                  decoration: _dropdownDecoration(),
+                  items: const [
+                    DropdownMenuItem(value: 'desc', child: Text('Датa ↓')),
+                    DropdownMenuItem(value: 'asc', child: Text('Датa ↑')),
+                  ],
+                  onChanged: (val) {
+                    setState(() => _sort = val);
+                    _onChanged();
+                  },
                 ),
               ),
             ],
@@ -221,31 +249,6 @@ class _PlanFiltersState extends State<PlanFilters> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: DropdownButtonFormField<String>(
-                  value: _sort,
-                  hint: const Text('Сортування', style: TextStyle(color: Colors.white70, fontSize: 12)),
-                  dropdownColor: Colors.grey[900],
-                  iconEnabledColor: Colors.white,
-                  style: const TextStyle(color: Colors.white, fontSize: 12),
-                  isExpanded: true,
-                  decoration: _dropdownDecoration(),
-                  items: const [
-                    DropdownMenuItem(value: 'published_desc', child: Text('Нове')),
-                    DropdownMenuItem(value: 'added_desc', child: Text('Популярне')),
-                    DropdownMenuItem(value: 'title_asc', child: Text('Назва A-Z')),
-                  ],
-                  onChanged: (val) {
-                    setState(() => _sort = val);
-                    _onChanged();
-                  },
-                ),
-              ),
-            ],
-          )
         ]
       ],
     );
